@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import Calendar from '../components/Calendar';
 import HabitsList from '../components/HabitsList';
 import moment from 'moment';
@@ -9,7 +9,7 @@ function HomeScreen(): React.JSX.Element {
   const todayFormatted = moment().format('MMM Do YYYY');
   const selectedDateFormatted = moment(selectedDate).format('MMM Do YYYY');
   return (
-    <SafeAreaView style={{height: '100%'}}>
+    <View style={styles.contentWrapper}>
       <View style={{flex: 2}}>
         <Calendar />
       </View>
@@ -23,11 +23,12 @@ function HomeScreen(): React.JSX.Element {
       <View style={{flex: 3}}>
         <HabitsList />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  contentWrapper: {height: '100%', padding: '5%'},
   date: {
     marginVertical: 32,
     fontSize: 32,
