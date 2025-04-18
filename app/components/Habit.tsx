@@ -26,16 +26,15 @@ function Habit({
       <Text style={styles.habitName}>{name}</Text>
       <View style={styles.buttonWrapper}>
         <IconButton
-          icon="x"
-          selected={completed === false}
+          icon="window-close"
+          iconColor={completed === false ? 'darkred' : 'gray'}
           size={48}
           onPress={() => handleIncomplete}
         />
 
         <IconButton
           icon="check"
-          iconColor="green"
-          selected={!!completed}
+          iconColor={completed ? 'green' : 'gray'}
           size={48}
           onPress={() => handleComplete}
         />

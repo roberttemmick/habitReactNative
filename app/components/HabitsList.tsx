@@ -5,7 +5,7 @@ import Habit from './Habit';
 const HABITS = [
   {id: '1', name: 'No sugar', completed: false},
   {id: '2', name: 'No alcohol', completed: true},
-  {id: '3', name: 'Meditate', completed: true},
+  {id: '3', name: 'Meditate', completed: null},
   {id: '4', name: 'Take medication', completed: false},
 ];
 
