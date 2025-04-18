@@ -4,7 +4,7 @@ import Calendar from '../components/Calendar';
 import HabitsList from '../components/HabitsList';
 import moment from 'moment';
 
-function WelcomeScreen(): React.JSX.Element {
+function HomeScreen(): React.JSX.Element {
   const selectedDate = new Date();
   const todayFormatted = moment().format('MMM Do YYYY');
   const selectedDateFormatted = moment(selectedDate).format('MMM Do YYYY');
@@ -35,4 +35,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WelcomeScreen;
+export default HomeScreen;
