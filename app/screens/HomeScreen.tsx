@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import Calendar from '../components/Calendar';
+import CalendarComponent from '../components/calendar/Calendar';
 import HabitsList from '../components/HabitsList';
 import moment from 'moment';
 
@@ -11,7 +11,7 @@ function HomeScreen(): React.JSX.Element {
   return (
     <View style={styles.contentWrapper}>
       <View style={{flex: 2}}>
-        <Calendar />
+        <CalendarComponent />
       </View>
 
       <Text style={styles.date}>
