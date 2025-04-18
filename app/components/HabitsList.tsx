@@ -6,7 +6,7 @@ const HABITS = [
   {id: '1', name: 'No sugar', completed: false},
   {id: '2', name: 'No alcohol', completed: true},
   {id: '3', name: 'Meditate', completed: null},
-  {id: '4', name: 'Take medication', completed: false},
+  {id: '4', name: 'Take medication really long one ahh why so long', completed: false},
 ];
 
 function HabitsList() {

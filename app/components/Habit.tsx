@@ -9,34 +9,34 @@ function Habit({
   name: string;
   completed: boolean | null;
 }): React.JSX.Element {
-  const handleComplete = () => {
-    // TODO
-    console.log('COMPLETE');
-    completed = true;
-  };
+  const [isComplete, setIsComplete] = React.useState<boolean | null>(completed);
 
-  const handleIncomplete = () => {
+  const handleCompleteStateChange = (completeState: boolean) => {
+    setIsComplete(completeState);
+    console.log('IS COMPLETE', completeState);
     // TODO
-    console.log('INCOMPLETE');
-    completed = false;
   };
 
   return (
     <View style={styles.habitWrapper}>
-      <Text style={styles.habitName}>{name}</Text>
+      <Text style={styles.habitName} numberOfLines={2}>
+        {name}
+      </Text>
       <View style={styles.buttonWrapper}>
         <IconButton
+          style={styles.icon}
           icon="window-close"
-          iconColor={completed === false ? 'darkred' : 'gray'}
+          iconColor={isComplete === false ? 'darkred' : 'gray'}
           size={48}
-          onPress={() => handleIncomplete}
+          onPress={() => handleCompleteStateChange(false)}
         />
 
         <IconButton
+          style={styles.icon}
           icon="check"
-          iconColor={completed ? 'green' : 'gray'}
+          iconColor={isComplete ? 'green' : 'gray'}
           size={48}
-          onPress={() => handleComplete}
+          onPress={() => handleCompleteStateChange(true)}
         />
       </View>
     </View>
@@ -47,10 +47,12 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     display: 'flex',
     flexDirection: 'row',
+    alignItems: 'center',
   },
   habitName: {
     fontSize: 24,
     fontWeight: 200,
+    width: '60%',
   },
   habitWrapper: {
     borderRadius: 16,
@@ -63,6 +65,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  icon: {
+    margin: 0,
   },
 });
 
