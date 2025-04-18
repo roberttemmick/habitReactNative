@@ -1,50 +1,174 @@
-import React, {useState} from 'react';
+import type {
+  CalendarProps,
+  CalendarTheme,
+} from '@marceloterreiro/flash-calendar';
+import {Calendar, useCalendar} from '@marceloterreiro/flash-calendar';
+import {format} from 'date-fns';
+import {memo, useMemo} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {Calendar, toDateId} from '@marceloterreiro/flash-calendar';
+import {calendarTokens} from './utils';
+import {ChevronButton} from './CalendarButton';
 
-function CalendarComponent() {
-  const [activeDateId, setActiveDateId] = useState<string | undefined>();
-  // toDateId(addDays(startOfThisMonth, 3)),
-
-  const startOfMonth = (date: Date) => {
-    return new Date(date.getFullYear(), date.getMonth(), 1);
-  };
-
-  const onCalendarDayPress = (dateId: string) => {
-    setActiveDateId(dateId);
-  };
-
-  return (
-    <View style={styles.calendarWrapper}>
-      <Calendar.List
-        calendarActiveDateRanges={[
-          {startId: activeDateId, endId: activeDateId},
-        ]}
-        calendarDayHeight={48}
-        calendarInitialMonthId={toDateId(startOfMonth(new Date()))}
-        calendarSpacing={20}
-        onCalendarDayPress={onCalendarDayPress}
-        // renderItem={({item}) => (
-        //   <View>
-        //     <Text>{item.id}</Text>
-        //   </View>
-        // )}
-      />
-    </View>
-  );
-}
+const DAY_HEIGHT = 25;
+const MONTH_HEADER_HEIGHT = 40;
+const WEEK_DAYS_HEIGHT = 25;
+const FOOTER_HEIGHT = 30;
+const BORDER_WIDTH = 1;
 
 const styles = StyleSheet.create({
-  calendarWrapper: {
-    borderRadius: 16,
-    borderColor: 'lightgray',
-    borderWidth: 1,
+  weekDivider: {
+    height: 1,
+    backgroundColor: calendarTokens.colors.content.primary,
+    position: 'absolute',
+    left: 8,
+    right: 8,
+    bottom: 0,
+  },
+  calendarContainer: {
+    backgroundColor: 'white',
     borderStyle: 'solid',
-    width: '100%',
-    height: '100%',
-    // alignItems: 'center',
-    // justifyContent: 'center',
+    borderWidth: BORDER_WIDTH,
+    borderColor: calendarTokens.colors.accent,
+  },
+  calendarFooter: {
+    height: FOOTER_HEIGHT,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+  },
+  calendarFooterLegend: {
+    width: 20,
+    height: 20,
+    borderColor: calendarTokens.colors.secondary,
+    borderWidth: 2,
+  },
+  calendarFooterText: {
+    fontStyle: 'italic',
   },
 });
 
-export default CalendarComponent;
+const calendarTheme: CalendarTheme = {
+  rowMonth: {
+    container: {
+      backgroundColor: calendarTokens.colors.accent,
+      height: MONTH_HEADER_HEIGHT,
+    },
+    content: {
+      color: calendarTokens.colors.content.inverse.primary,
+      fontSize: 17,
+      width: 200,
+      textAlign: 'center',
+    },
+  },
+  itemWeekName: {content: {color: calendarTokens.colors.accent}},
+  itemDay: {
+    base: () => ({
+      container: {
+        padding: 0,
+        borderRadius: 0,
+      },
+    }),
+    today: () => ({
+      container: {
+        borderWidth: 2,
+        borderColor: calendarTokens.colors.secondary,
+      },
+    }),
+    idle: ({isDifferentMonth}) => ({
+      content: isDifferentMonth
+        ? {
+            color: calendarTokens.colors.content.disabled,
+          }
+        : undefined,
+    }),
+    active: () => ({
+      container: {
+        backgroundColor: calendarTokens.colors.accent,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
+      },
+      content: {
+        color: calendarTokens.colors.content.inverse.primary,
+      },
+    }),
+  },
+};
+
+interface CustomCalendarProps extends CalendarProps {
+  onPreviousMonthPress: () => void;
+  onNextMonthPress: () => void;
+}
+export const CustomCalendar = memo((props: CustomCalendarProps) => {
+  const {calendarRowMonth, weekDaysList, weeksList} = useCalendar(props);
+
+  const today = useMemo(() => {
+    return weeksList.flatMap(week => week).find(day => day.isToday);
+  }, [weeksList]);
+
+  return (
+    <View style={styles.calendarContainer}>
+      <Calendar.VStack spacing={props.calendarRowVerticalSpacing}>
+        {/* Replaces `Calendar.Row.Month` with a custom implementation */}
+        <Calendar.HStack
+          alignItems="center"
+          justifyContent="space-around"
+          style={calendarTheme.rowMonth?.container}
+          width="100%">
+          <ChevronButton
+            onPress={props.onPreviousMonthPress}
+            size={30}
+            type="left"
+          />
+          <Text style={calendarTheme.rowMonth?.content}>
+            {calendarRowMonth}
+          </Text>
+          <ChevronButton
+            onPress={props.onNextMonthPress}
+            size={30}
+            type="right"
+          />
+        </Calendar.HStack>
+
+        <Calendar.Row.Week spacing={4}>
+          {weekDaysList.map((day, i) => (
+            <Calendar.Item.WeekName
+              height={WEEK_DAYS_HEIGHT}
+              key={i}
+              theme={calendarTheme.itemWeekName}>
+              {day}
+            </Calendar.Item.WeekName>
+          ))}
+          <View style={styles.weekDivider} />
+        </Calendar.Row.Week>
+
+        {weeksList.map((week, i) => (
+          <Calendar.Row.Week key={i}>
+            {week.map(day => (
+              <Calendar.Item.Day.Container
+                dayHeight={DAY_HEIGHT}
+                daySpacing={4}
+                isStartOfWeek={day.isStartOfWeek}
+                key={day.id}>
+                <Calendar.Item.Day
+                  height={DAY_HEIGHT}
+                  metadata={day}
+                  onPress={props.onCalendarDayPress}
+                  theme={calendarTheme.itemDay}>
+                  {day.displayLabel}
+                </Calendar.Item.Day>
+              </Calendar.Item.Day.Container>
+            ))}
+          </Calendar.Row.Week>
+        ))}
+
+        <View style={styles.calendarFooter}>
+          <Text style={styles.calendarFooterText}>Streak: ... days</Text>
+        </View>
+      </Calendar.VStack>
+    </View>
+  );
+});
