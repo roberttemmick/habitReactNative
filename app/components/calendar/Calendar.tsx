@@ -158,7 +158,7 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
                   <Text>
                     {day.displayLabel} {'\n'}
                   </Text>
-                  <Text>Icon</Text>
+                  {day.isDisabled || <Text>Icon</Text>}
                   {/* <Icon iconStyle="solid" name="check" /> */}
                 </Calendar.Item.Day>
               </Calendar.Item.Day.Container>
@@ -167,7 +167,7 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
         ))}
 
         <View style={styles.calendarFooter}>
-          <Text style={styles.calendarFooterText}>Streak: ... days</Text>
+          <Text style={styles.calendarFooterText}>... day streak</Text>
         </View>
       </Calendar.VStack>
     </View>
