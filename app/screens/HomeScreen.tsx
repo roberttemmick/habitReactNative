@@ -1,17 +1,26 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import CalendarComponent from '../components/calendar/CalendarWrapper';
+import CalendarWrapper from '../components/calendar/CalendarWrapper';
 import HabitsList from '../components/HabitsList';
 import moment from 'moment';
+import {fromDateId} from '@marceloterreiro/flash-calendar';
 
 function HomeScreen(): React.JSX.Element {
-  const selectedDate = new Date();
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const todayFormatted = moment().format('MMM Do YYYY');
   const selectedDateFormatted = moment(selectedDate).format('MMM Do YYYY');
+
+  const handleSelectedDateChanged = (dateId: string) => {
+    console.log('HANDLE DATE CHANGE', dateId);
+    setSelectedDate(fromDateId(dateId));
+  };
+
   return (
     <View style={styles.contentWrapper}>
-      <View style={{flex: 2}}>
-        <CalendarComponent />
+      <View>
+        <CalendarWrapper
+          emitSelectedDateChangedEvent={handleSelectedDateChanged}
+        />
       </View>
 
       <Text style={styles.date}>
@@ -20,7 +29,7 @@ function HomeScreen(): React.JSX.Element {
           : selectedDateFormatted}
       </Text>
 
-      <View style={{flex: 3}}>
+      <View>
         <HabitsList />
       </View>
     </View>
@@ -33,6 +42,7 @@ const styles = StyleSheet.create({
     marginVertical: 32,
     fontSize: 32,
     textAlign: 'center',
+    fontWeight: 200,
   },
 });
 

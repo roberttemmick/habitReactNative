@@ -5,12 +5,8 @@ import {calendarTokens} from './utils';
 
 const styles = StyleSheet.create({
   chevronContainer: {
-    backgroundColor: calendarTokens.colors.button.secondaryBackground,
     alignItems: 'center',
     justifyContent: 'center',
-    borderColor: calendarTokens.colors.accent,
-    borderWidth: 1,
-    borderStyle: 'solid',
   },
   chevronText: {
     color: calendarTokens.colors.button.content,
@@ -18,37 +14,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   chevronButtonContainer: {
-    borderColor: calendarTokens.colors.accent,
-    borderStyle: 'solid',
-    borderWidth: 1,
-    backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 2,
   },
 });
 
-const BASE_CHEVRON = '▼';
-
-const Chevron = memo(
-  ({type}: {type: 'left' | 'bottom' | 'top' | 'right'}) => {
-    return (
-      <Text
-        style={[
-          styles.chevronText,
-          {
-            transform: [
-              type === 'left' ? {rotate: '90deg'} : {rotate: '0deg'},
-              type === 'top' ? {rotate: '180deg'} : {rotate: '0deg'},
-              type === 'right' ? {rotate: '-90deg'} : {rotate: '0deg'},
-            ],
-          },
-        ]}>
-        {BASE_CHEVRON}
-      </Text>
-    );
-  },
-);
+const Chevron = memo(({type}: {type: 'left' | 'right'}) => {
+  return <Text>{type === 'left' ? '<' : '>'}</Text>;
+});
 
 export const ChevronButton = memo(
   ({
@@ -56,7 +29,7 @@ export const ChevronButton = memo(
     onPress,
     size: sizeProp,
   }: {
-    type: 'left' | 'bottom' | 'top' | 'right';
+    type: 'left' | 'right';
     size: number;
     onPress: () => void;
   }) => {
