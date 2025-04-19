@@ -8,11 +8,14 @@ import {
 } from '@marceloterreiro/flash-calendar';
 import {CustomCalendar} from './Calendar';
 import {sub, add} from 'date-fns';
+import {DateHabit} from '../../types/types';
 
 function CalendarWrapper({
   emitSelectedDateChangedEvent,
+  selectedDateHabit,
 }: {
   emitSelectedDateChangedEvent: Function;
+  selectedDateHabit: DateHabit | undefined;
 }) {
   const [currentCalendarMonth, setCurrentCalendarMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());

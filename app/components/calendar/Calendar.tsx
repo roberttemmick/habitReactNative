@@ -7,6 +7,7 @@ import {memo} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {calendarTokens} from './utils';
 import {ChevronButton} from './CalendarButton';
+import CircularProgress from 'react-native-circular-progress-indicator';
 
 const DAY_HEIGHT = 50;
 const MONTH_HEADER_HEIGHT = 40;
@@ -14,6 +15,12 @@ const WEEK_DAYS_HEIGHT = 25;
 const FOOTER_HEIGHT = 30;
 
 const styles = StyleSheet.create({
+  dayIconWrapper: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   weekDivider: {
     height: 1,
     backgroundColor: 'lightgray',
@@ -101,6 +108,7 @@ const calendarTheme: CalendarTheme = {
 };
 
 interface CustomCalendarProps extends CalendarProps {
+  onCalendarDayPress: (dateId: string) => void;
   onPreviousMonthPress: () => void;
   onNextMonthPress: () => void;
 }
@@ -158,7 +166,21 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
                   <Text>
                     {day.displayLabel} {'\n'}
                   </Text>
-                  {day.isDisabled || <Text>Icon</Text>}
+                  {day.isDisabled || (
+                    <View style={styles.dayIconWrapper}>
+                      <CircularProgress
+                        value={100}
+                        radius={14}
+                        duration={500}
+                        activeStrokeWidth={4}
+                        inActiveStrokeOpacity={0}
+                        activeStrokeColor="green"
+                        title="1/4"
+                        titleFontSize={10}
+                        showProgressValue={false}
+                      />
+                    </View>
+                  )}
                   {/* <Icon iconStyle="solid" name="check" /> */}
                 </Calendar.Item.Day>
               </Calendar.Item.Day.Container>
