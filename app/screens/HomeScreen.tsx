@@ -4,6 +4,7 @@ import CalendarWrapper from '../components/calendar/CalendarWrapper';
 import HabitsList from '../components/HabitsList';
 import moment from 'moment';
 import {fromDateId} from '@marceloterreiro/flash-calendar';
+import { ScrollView } from "react-native";
 
 function HomeScreen(): React.JSX.Element {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -11,12 +12,11 @@ function HomeScreen(): React.JSX.Element {
   const selectedDateFormatted = moment(selectedDate).format('MMM Do YYYY');
 
   const handleSelectedDateChanged = (dateId: string) => {
-    console.log('HANDLE DATE CHANGE', dateId);
     setSelectedDate(fromDateId(dateId));
   };
 
   return (
-    <View style={styles.contentWrapper}>
+    <ScrollView style={styles.contentWrapper}>
       <View>
         <CalendarWrapper
           emitSelectedDateChangedEvent={handleSelectedDateChanged}
@@ -32,7 +32,7 @@ function HomeScreen(): React.JSX.Element {
       <View>
         <HabitsList />
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
