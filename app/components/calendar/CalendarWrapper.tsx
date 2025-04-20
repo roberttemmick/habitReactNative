@@ -11,10 +11,12 @@ import {sub, add} from 'date-fns';
 import {DateHabit} from '../../types/types';
 
 function CalendarWrapper({
+  calendarMinDateId,
   emitSelectedDateChangedEvent,
   selectedDateHabit,
   streakCount,
 }: {
+  calendarMinDateId: string;
   emitSelectedDateChangedEvent: Function;
   selectedDateHabit: DateHabit;
   streakCount: number;
@@ -51,7 +53,7 @@ function CalendarWrapper({
       <Calendar.VStack justifyContent="flex-start" spacing={12}>
         <CustomCalendar
           calendarActiveDateRanges={calendarActiveDateRanges}
-          // calendarMinDateId={}
+          calendarMinDateId={calendarMinDateId}
           calendarMaxDateId={toDateId(new Date())}
           calendarMonthId={toDateId(currentCalendarMonth)}
           onCalendarDayPress={handleDayPress}

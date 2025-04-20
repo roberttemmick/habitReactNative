@@ -1,16 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {View} from 'react-native';
 import HabitComponent from './HabitComponent';
 import {Habit} from '../types/types';
 
 function HabitsList({habits}: {habits: Habit[]}) {
-  // TODO: remove useEffect & useState?
-  // const [habitsList, setHabitsList] = useState(() => habits);
-
-  // useEffect(() => {
-  //   setHabitsList(habits);
-  // }, [habits]);
-
   return (
     <View>
       {habits.map(item => {

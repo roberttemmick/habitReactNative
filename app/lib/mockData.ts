@@ -20,7 +20,7 @@ export const MOCKDATA: DateHabit[] = [
   },
   {
     dateId: toDateId(new Date(new Date().setDate(new Date().getDate() - 1))),
-    completed: false,
+    completed: true,
     habits: [
       {id: '1', name: 'No sugar', completed: true},
       {id: '2', name: 'No alcohol', completed: true},
@@ -34,7 +34,35 @@ export const MOCKDATA: DateHabit[] = [
   },
   {
     dateId: toDateId(new Date(new Date().setDate(new Date().getDate() - 2))),
-    completed: false,
+    completed: true,
+    habits: [
+      {id: '1', name: 'No sugar', completed: true},
+      {id: '2', name: 'No alcohol', completed: true},
+      {id: '3', name: 'Meditate', completed: true},
+      {
+        id: '4',
+        name: 'Take medication',
+        completed: true,
+      },
+    ],
+  },
+  {
+    dateId: toDateId(new Date(new Date().setDate(new Date().getDate() - 3))),
+    completed: true,
+    habits: [
+      {id: '1', name: 'No sugar', completed: true},
+      {id: '2', name: 'No alcohol', completed: true},
+      {id: '3', name: 'Meditate', completed: true},
+      {
+        id: '4',
+        name: 'Take medication',
+        completed: true,
+      },
+    ],
+  },
+  {
+    dateId: toDateId(new Date(new Date().setDate(new Date().getDate() - 4))),
+    completed: true,
     habits: [
       {id: '1', name: 'No sugar', completed: true},
       {id: '2', name: 'No alcohol', completed: true},
