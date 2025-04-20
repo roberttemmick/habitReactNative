@@ -5,7 +5,7 @@ import HabitsList from '../components/HabitsList';
 import moment from 'moment';
 import {fromDateId, toDateId} from '@marceloterreiro/flash-calendar';
 import {ScrollView} from 'react-native';
-import {DateHabit, Habit} from '../types/types';
+import {DateHabit} from '../types/types';
 import {MOCKDATA} from '../lib/mockData';
 
 function HomeScreen(): React.JSX.Element {
@@ -62,6 +62,7 @@ function HomeScreen(): React.JSX.Element {
       <View>
         <CalendarWrapper
           calendarMinDateId={calendarMinDateId}
+          dateHabits={dateHabits}
           selectedDateHabit={selectedDateHabit}
           streakCount={getStreakCount()}
           emitSelectedDateChangedEvent={handleSelectedDateChanged}

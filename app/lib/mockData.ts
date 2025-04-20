@@ -62,15 +62,20 @@ export const MOCKDATA: DateHabit[] = [
   },
   {
     dateId: toDateId(new Date(new Date().setDate(new Date().getDate() - 4))),
-    completed: true,
+    completed: false,
     habits: [
-      {id: '1', name: 'No sugar', completed: true},
+      {id: '1', name: 'No sugar', completed: false},
       {id: '2', name: 'No alcohol', completed: true},
       {id: '3', name: 'Meditate', completed: true},
       {
         id: '4',
         name: 'Take medication',
         completed: true,
+      },
+      {
+        id: '5',
+        name: 'No social media',
+        completed: false,
       },
     ],
   },

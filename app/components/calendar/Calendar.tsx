@@ -1,8 +1,9 @@
 import type {
+  CalendarDayMetadata,
   CalendarProps,
   CalendarTheme,
 } from '@marceloterreiro/flash-calendar';
-import {Calendar, useCalendar} from '@marceloterreiro/flash-calendar';
+import {Calendar, toDateId, useCalendar} from '@marceloterreiro/flash-calendar';
 import {memo} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {calendarTokens} from './utils';
@@ -116,24 +117,37 @@ interface CustomCalendarProps extends CalendarProps {
   onCalendarDayPress: (dateId: string) => void;
   onPreviousMonthPress: () => void;
   onNextMonthPress: () => void;
+  dateHabits: DateHabit[];
   selectedDateHabit: DateHabit;
   streakCount: number;
 }
 export const CustomCalendar = memo((props: CustomCalendarProps) => {
   const {calendarRowMonth, weekDaysList, weeksList} = useCalendar(props);
 
-  const getCompletedCount = (): number => {
+  const getCompletedCount = (dateHabit: DateHabit): number => {
     let counter = 0;
 
-    props.selectedDateHabit.habits.forEach((habit: Habit) => {
+    dateHabit.habits.forEach((habit: Habit) => {
       habit.completed && counter++;
     });
 
     return counter;
   };
 
-  const getDateCompletedState = (): boolean => {
-    return getCompletedCount() === props.selectedDateHabit.habits.length;
+  const getDateCompletedState = (dateHabit: DateHabit): boolean => {
+    return getCompletedCount(dateHabit) === dateHabit.habits.length;
+  };
+
+  const getDateHabitDay = (day: CalendarDayMetadata): DateHabit => {
+    return (
+      props.dateHabits.find((dateHabit: DateHabit) => {
+        return dateHabit.dateId === day.id;
+      }) || {
+        dateId: toDateId(new Date(props.selectedDateHabit.dateId)),
+        completed: false,
+        habits: [],
+      }
+    );
   };
 
   return (
@@ -184,20 +198,19 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
                   metadata={day}
                   onPress={props.onCalendarDayPress}
                   theme={calendarTheme.itemDay}>
-                    
                   <Text>
                     {day.displayLabel} {'\n'}
                   </Text>
                   {!day.isDisabled &&
-                    props.selectedDateHabit.habits.length > 0 && (
+                    getDateHabitDay(day).habits.length > 0 && (
                       <View style={styles.dayIconWrapper}>
-                        {getDateCompletedState() ? (
+                        {getDateCompletedState(getDateHabitDay(day)) ? (
                           <Text style={styles.checkIcon}>&#x2713;</Text>
                         ) : (
                           <CircularProgress
                             value={
-                              (getCompletedCount() /
-                                props.selectedDateHabit.habits.length) *
+                              (getCompletedCount(getDateHabitDay(day)) /
+                                getDateHabitDay(day).habits.length) *
                               100
                             }
                             radius={14}
@@ -205,41 +218,15 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
                             activeStrokeWidth={4}
                             inActiveStrokeOpacity={0}
                             activeStrokeColor="green"
-                            title={`${getCompletedCount()}/${
-                              props.selectedDateHabit.habits.length
-                            }`}
+                            title={`${getCompletedCount(
+                              getDateHabitDay(day),
+                            )}/${getDateHabitDay(day).habits.length}`}
                             titleFontSize={10}
                             showProgressValue={false}
                           />
                         )}
                       </View>
                     )}
-                  {/* {!day.isDisabled &&
-                    props.selectedDateHabit.habits.length > 0 && (
-                      <View style={styles.dayIconWrapper}>
-                        {getDateCompletedState() ? (
-                          <Text style={styles.checkIcon}>&#x2713;</Text>
-                        ) : (
-                          <CircularProgress
-                            value={
-                              (getCompletedCount() /
-                                props.selectedDateHabit.habits.length) *
-                              100
-                            }
-                            radius={14}
-                            duration={500}
-                            activeStrokeWidth={4}
-                            inActiveStrokeOpacity={0}
-                            activeStrokeColor="green"
-                            title={`${getCompletedCount()}/${
-                              props.selectedDateHabit.habits.length
-                            }`}
-                            titleFontSize={10}
-                            showProgressValue={false}
-                          />
-                        )}
-                      </View>
-                    )} */}
                 </Calendar.Item.Day>
               </Calendar.Item.Day.Container>
             ))}
