@@ -13,7 +13,6 @@ function HabitComponent({
 
   const handleCompleteStateChange = (completeState: boolean) => {
     setIsComplete(completeState);
-    console.log('IS COMPLETE', completeState);
     // TODO
   };
 

@@ -11,7 +11,7 @@ import {ChevronButton} from './CalendarButton';
 import CircularProgress from 'react-native-circular-progress-indicator';
 import {DateHabit, Habit} from '../../types/types';
 
-const DAY_HEIGHT = 50;
+const DAY_HEIGHT = 46;
 const MONTH_HEADER_HEIGHT = 40;
 const WEEK_DAYS_HEIGHT = 25;
 const FOOTER_HEIGHT = 30;
@@ -48,17 +48,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  itemDay: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
   weekDivider: {
     height: 1,
     backgroundColor: 'lightgray',
     position: 'absolute',
     left: 8,
     right: 8,
-    bottom: 0,
+    bottom: 4,
   },
 });
 
@@ -74,11 +70,19 @@ const calendarTheme: CalendarTheme = {
       textAlign: 'center',
     },
   },
+  itemWeekName: {
+    container: {
+      marginBottom: 4,
+    },
+  },
   itemDay: {
     base: () => ({
       container: {
         padding: 0,
         borderRadius: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
       },
     }),
     today: () => ({
@@ -101,6 +105,8 @@ const calendarTheme: CalendarTheme = {
     active: () => ({
       container: {
         backgroundColor: 'lightgray',
+        borderWidth: 1,
+        borderColor: 'lightgray',
         borderTopLeftRadius: '5%',
         borderTopRightRadius: '5%',
         borderBottomLeftRadius: '5%',
@@ -138,16 +144,18 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
     return getCompletedCount(dateHabit) === dateHabit.habits.length;
   };
 
+  let dateHabitDay: DateHabit;
+
   const getDateHabitDay = (day: CalendarDayMetadata): DateHabit => {
-    return (
-      props.dateHabits.find((dateHabit: DateHabit) => {
-        return dateHabit.dateId === day.id;
-      }) || {
-        dateId: toDateId(new Date(props.selectedDateHabit.dateId)),
-        completed: false,
-        habits: [],
-      }
-    );
+    dateHabitDay = props.dateHabits.find((dateHabit: DateHabit) => {
+      return dateHabit.dateId === day.id;
+    }) || {
+      dateId: toDateId(new Date(props.selectedDateHabit.dateId)),
+      completed: false,
+      habits: [],
+    };
+
+    return dateHabitDay;
   };
 
   return (

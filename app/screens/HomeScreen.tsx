@@ -31,14 +31,11 @@ function HomeScreen(): React.JSX.Element {
   );
 
   const handleSelectedDateChanged = (dateId: string) => {
-    console.log('dateId', dateId);
     setSelectedDate(fromDateId(dateId));
-    console.log('getSelectedDateHabit', getSelectedDateHabit(dateId));
   };
 
   useEffect(() => {
     setSelectedDateHabit(getSelectedDateHabit(toDateId(selectedDate)));
-    console.log('selectedDateHabit', selectedDateHabit);
   }, [selectedDate, selectedDateHabit, getSelectedDateHabit]);
 
   const getStreakCount = (): number => {
