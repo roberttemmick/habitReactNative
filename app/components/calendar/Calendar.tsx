@@ -16,20 +16,6 @@ const WEEK_DAYS_HEIGHT = 25;
 const FOOTER_HEIGHT = 30;
 
 const styles = StyleSheet.create({
-  dayIconWrapper: {
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  weekDivider: {
-    height: 1,
-    backgroundColor: 'lightgray',
-    position: 'absolute',
-    left: 8,
-    right: 8,
-    bottom: 0,
-  },
   calendarContainer: {
     backgroundColor: 'white',
     borderRadius: 16,
@@ -51,9 +37,27 @@ const styles = StyleSheet.create({
   calendarFooterText: {
     fontStyle: 'italic',
   },
+  checkIcon: {
+    color: 'green',
+    fontSize: 24,
+  },
+  dayIconWrapper: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   itemDay: {
     display: 'flex',
     flexDirection: 'column',
+  },
+  weekDivider: {
+    height: 1,
+    backgroundColor: 'lightgray',
+    position: 'absolute',
+    left: 8,
+    right: 8,
+    bottom: 0,
   },
 });
 
@@ -180,6 +184,7 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
                   metadata={day}
                   onPress={props.onCalendarDayPress}
                   theme={calendarTheme.itemDay}>
+                    
                   <Text>
                     {day.displayLabel} {'\n'}
                   </Text>
@@ -187,10 +192,8 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
                     props.selectedDateHabit.habits.length > 0 && (
                       <View style={styles.dayIconWrapper}>
                         {getDateCompletedState() ? (
-                          <Text>Completed</Text>
+                          <Text style={styles.checkIcon}>&#x2713;</Text>
                         ) : (
-                          // TODO: display icon
-                          // <Icon iconStyle="solid" name="check" />
                           <CircularProgress
                             value={
                               (getCompletedCount() /
@@ -211,7 +214,32 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
                         )}
                       </View>
                     )}
-                  {/* <Icon iconStyle="solid" name="check" /> */}
+                  {/* {!day.isDisabled &&
+                    props.selectedDateHabit.habits.length > 0 && (
+                      <View style={styles.dayIconWrapper}>
+                        {getDateCompletedState() ? (
+                          <Text style={styles.checkIcon}>&#x2713;</Text>
+                        ) : (
+                          <CircularProgress
+                            value={
+                              (getCompletedCount() /
+                                props.selectedDateHabit.habits.length) *
+                              100
+                            }
+                            radius={14}
+                            duration={500}
+                            activeStrokeWidth={4}
+                            inActiveStrokeOpacity={0}
+                            activeStrokeColor="green"
+                            title={`${getCompletedCount()}/${
+                              props.selectedDateHabit.habits.length
+                            }`}
+                            titleFontSize={10}
+                            showProgressValue={false}
+                          />
+                        )}
+                      </View>
+                    )} */}
                 </Calendar.Item.Day>
               </Calendar.Item.Day.Container>
             ))}

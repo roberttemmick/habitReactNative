@@ -50,7 +50,7 @@ function CalendarWrapper({
 
   return (
     <View>
-      <Calendar.VStack justifyContent="flex-start" spacing={12}>
+      <Calendar.VStack justifyContent="flex-start" spacing={12} >
         <CustomCalendar
           calendarActiveDateRanges={calendarActiveDateRanges}
           calendarMinDateId={calendarMinDateId}
