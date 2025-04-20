@@ -1,24 +1,25 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View} from 'react-native';
-import Habit from './Habit';
+import HabitComponent from './HabitComponent';
+import {Habit} from '../types/types';
 
-const data = [
-  {id: '1', name: 'No sugar', completed: false},
-  {id: '2', name: 'No alcohol', completed: true},
-  {id: '3', name: 'Meditate', completed: null},
-  {
-    id: '4',
-    name: 'Take medication really long one ahh why so long',
-    completed: false,
-  },
-];
+function HabitsList({habits}: {habits: Habit[]}) {
+  // TODO: remove useEffect & useState?
+  // const [habitsList, setHabitsList] = useState(() => habits);
 
-function HabitsList() {
+  // useEffect(() => {
+  //   setHabitsList(habits);
+  // }, [habits]);
+
   return (
     <View>
-      {data.map(item => {
+      {habits.map(item => {
         return (
-          <Habit key={item.id} name={item.name} completed={item.completed} />
+          <HabitComponent
+            key={item.id}
+            name={item.name}
+            completed={item.completed}
+          />
         );
       })}
     </View>

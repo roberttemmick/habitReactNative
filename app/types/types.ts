@@ -6,5 +6,6 @@ export interface Habit {
 
 export interface DateHabit {
   dateId: string;
+  completed: boolean;
   habits: Habit[];
 }

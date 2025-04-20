@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {IconButton} from 'react-native-paper';
 
-function Habit({
+function HabitComponent({
   name,
   completed,
 }: {
@@ -71,4 +71,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Habit;
+export default HabitComponent;

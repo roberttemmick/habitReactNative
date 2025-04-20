@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import CalendarWrapper from '../components/calendar/CalendarWrapper';
 import HabitsList from '../components/HabitsList';
@@ -6,40 +6,47 @@ import moment from 'moment';
 import {fromDateId, toDateId} from '@marceloterreiro/flash-calendar';
 import {ScrollView} from 'react-native';
 import {DateHabit} from '../types/types';
-
-const MOCKDATA = [
-  {
-    dateId: toDateId(new Date()),
-    habits: [
-      {id: '1', name: 'No sugar', completed: false},
-      {id: '2', name: 'No alcohol', completed: true},
-      {id: '3', name: 'Meditate', completed: null},
-      {
-        id: '4',
-        name: 'Take medication really long one ahh why so long',
-        completed: false,
-      },
-    ],
-  },
-];
+import {MOCKDATA} from '../lib/mockData';
 
 function HomeScreen(): React.JSX.Element {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const selectedDateFormatted = moment(selectedDate).format('MMM Do YYYY');
   const todayFormatted = moment().format('MMM Do YYYY');
 
-  const getSelectedDateHabit = (dateId: string): DateHabit | undefined =>
-    MOCKDATA.find((dateHabit: DateHabit) => {
-      return dateHabit.dateId === dateId;
-    });
+  const dateHabits = MOCKDATA;
+
+  const getSelectedDateHabit = useCallback((dateId: string): DateHabit => {
+    return (
+      dateHabits.find((dateHabit: DateHabit) => {
+        return dateHabit.dateId === dateId;
+      }) || {dateId: toDateId(selectedDate), completed: false, habits: []}
+    );
+  }, [dateHabits, selectedDate]);
 
   const [selectedDateHabit, setSelectedDateHabit] = useState(
     getSelectedDateHabit(toDateId(selectedDate)),
   );
 
   const handleSelectedDateChanged = (dateId: string) => {
+    console.log('dateId', dateId);
     setSelectedDate(fromDateId(dateId));
-    setSelectedDateHabit(getSelectedDateHabit(dateId));
+    // setSelectedDateHabit(getSelectedDateHabit(dateId));
+    console.log('getSelectedDateHabit', getSelectedDateHabit(dateId));
+  };
+
+  useEffect(() => {
+    setSelectedDateHabit(getSelectedDateHabit(toDateId(selectedDate)));
+    console.log('selectedDateHabit', selectedDateHabit);
+  }, [selectedDate, selectedDateHabit, getSelectedDateHabit]);
+
+  const getStreakCount = (): number => {
+    let counter = 0;
+
+    for (let i = 1; i < dateHabits.length; i++) {
+      dateHabits[i].completed && counter++;
+    }
+
+    return counter;
   };
 
   return (
@@ -47,6 +54,7 @@ function HomeScreen(): React.JSX.Element {
       <View>
         <CalendarWrapper
           selectedDateHabit={selectedDateHabit}
+          streakCount={getStreakCount()}
           emitSelectedDateChangedEvent={handleSelectedDateChanged}
         />
       </View>
@@ -58,7 +66,7 @@ function HomeScreen(): React.JSX.Element {
       </Text>
 
       <View>
-        <HabitsList />
+        <HabitsList habits={selectedDateHabit.habits} />
       </View>
     </ScrollView>
   );
