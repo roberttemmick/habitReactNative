@@ -11,9 +11,18 @@ function HabitComponent({
 }): React.JSX.Element {
   const [isComplete, setIsComplete] = React.useState<boolean | null>(completed);
 
+  React.useEffect(() => {
+    setIsComplete(completed);
+  }, [completed]);
+
   const handleCompleteStateChange = (completeState: boolean) => {
     setIsComplete(completeState);
-    // TODO
+
+    if (completeState) {
+      // TODO: if all habits are complete for the day: dateHabit.complete = true, iterate streakCount, launch congrats popup, show ads?
+    } else {
+      // TODO: if habit is marked incomplete, dateHabit.complete = false
+    }
   };
 
   return (
