@@ -1,11 +1,10 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import CalendarWrapper from '../components/calendar/CalendarWrapper';
 import HabitsList from '../components/HabitsList';
 import moment from 'moment';
 import {fromDateId, toDateId} from '@marceloterreiro/flash-calendar';
-import {ScrollView} from 'react-native';
-import {DateHabit} from '../types/types';
+import {DateHabit, Habit} from '../types/types';
 import {MOCKDATA} from '../lib/mockData';
 
 function HomeScreen(): React.JSX.Element {
@@ -34,12 +33,21 @@ function HomeScreen(): React.JSX.Element {
     setSelectedDate(fromDateId(dateId));
   };
 
+  const handleCompleteStateChange = (habits: Habit[]) => {
+    selectedDateHabit.habits = habits;
+    setSelectedDateHabit({...selectedDateHabit, habits});
+  };
+
   useEffect(() => {
     setSelectedDateHabit(getSelectedDateHabit(toDateId(selectedDate)));
   }, [selectedDate, selectedDateHabit, getSelectedDateHabit]);
 
   const getStreakCount = (): number => {
     let counter = 0;
+
+    if (getSelectedDateHabit(toDateId(new Date())).completed) {
+      counter++;
+    }
 
     let i = 1;
     while (i < dateHabits.length && dateHabits[i].completed) {
@@ -73,7 +81,10 @@ function HomeScreen(): React.JSX.Element {
       </Text>
 
       <View>
-        <HabitsList habits={selectedDateHabit.habits} />
+        <HabitsList
+          habits={selectedDateHabit.habits}
+          emitCompletedStateChangeEvent={handleCompleteStateChange}
+        />
       </View>
     </ScrollView>
   );

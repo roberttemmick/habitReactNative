@@ -3,11 +3,15 @@ import {StyleSheet, Text, View} from 'react-native';
 import {IconButton} from 'react-native-paper';
 
 function HabitComponent({
+  id,
   name,
   completed,
+  emitCompletedStateChangeEvent,
 }: {
+  id: string,
   name: string;
   completed: boolean | null;
+  emitCompletedStateChangeEvent: Function
 }): React.JSX.Element {
   const [isComplete, setIsComplete] = React.useState<boolean | null>(completed);
 
@@ -18,6 +22,8 @@ function HabitComponent({
   const handleCompleteStateChange = (completeState: boolean) => {
     setIsComplete(completeState);
 
+    emitCompletedStateChangeEvent(id, completeState)
+    // TODO: emit event
     if (completeState) {
       // TODO: if all habits are complete for the day: dateHabit.complete = true, iterate streakCount, launch congrats popup, show ads?
     } else {
