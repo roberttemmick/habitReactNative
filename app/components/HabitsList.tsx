@@ -15,7 +15,6 @@ function HabitsList({
       return habit.id === id;
     })!.completed = completeState;
 
-    console.log('updatedHabits', habits);
     emitCompletedStateChangeEvent(habits);
   };
 

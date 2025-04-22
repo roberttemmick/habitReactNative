@@ -12,7 +12,7 @@ function HomeScreen(): React.JSX.Element {
   const selectedDateFormatted = moment(selectedDate).format('MMM Do YYYY');
   const todayFormatted = moment().format('MMM Do YYYY');
 
-  const dateHabits = MOCKDATA;
+  const [dateHabits, setDateHabits] = useState<DateHabit[]>(MOCKDATA);
 
   const getSelectedDateHabit = useCallback(
     (dateId: string): DateHabit => {
@@ -34,17 +34,32 @@ function HomeScreen(): React.JSX.Element {
   };
 
   const handleCompleteStateChange = (habits: Habit[]) => {
-    selectedDateHabit.habits = habits;
-    setSelectedDateHabit({...selectedDateHabit, habits});
+    const allTasksCompleted = habits.every(task => task.completed);
+
+    const updatedDateHabit = {
+      ...selectedDateHabit,
+      completed: allTasksCompleted,
+      habits,
+    };
+
+    setSelectedDateHabit(updatedDateHabit);
+    setDateHabits(prev =>
+      prev.map(d =>
+        d.dateId === updatedDateHabit.dateId ? updatedDateHabit : d,
+      ),
+    );
+
+    setStreakCount(getStreakCount());
   };
 
   useEffect(() => {
     setSelectedDateHabit(getSelectedDateHabit(toDateId(selectedDate)));
-  }, [selectedDate, selectedDateHabit, getSelectedDateHabit]);
+  }, [selectedDate, getSelectedDateHabit]);
 
-  const getStreakCount = (): number => {
+  const getStreakCount = useCallback((): number => {
     let counter = 0;
 
+    console.log('!!!', getSelectedDateHabit(toDateId(new Date())));
     if (getSelectedDateHabit(toDateId(new Date())).completed) {
       counter++;
     }
@@ -56,7 +71,17 @@ function HomeScreen(): React.JSX.Element {
     }
 
     return counter;
-  };
+  }, [dateHabits, getSelectedDateHabit]);
+
+  useEffect(() => {
+    const isToday = toDateId(selectedDate) === toDateId(new Date());
+
+    if (selectedDateHabit.completed && isToday) {
+      setStreakCount(getStreakCount());
+    }
+  }, [selectedDateHabit, selectedDate, getStreakCount]);
+
+  const [streakCount, setStreakCount] = useState(getStreakCount());
 
   const calendarMinDateId = useMemo(() => {
     return dateHabits[dateHabits.length - 1].dateId;
@@ -69,7 +94,7 @@ function HomeScreen(): React.JSX.Element {
           calendarMinDateId={calendarMinDateId}
           dateHabits={dateHabits}
           selectedDateHabit={selectedDateHabit}
-          streakCount={getStreakCount()}
+          streakCount={streakCount}
           emitSelectedDateChangedEvent={handleSelectedDateChanged}
         />
       </View>

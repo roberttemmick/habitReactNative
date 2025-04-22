@@ -8,10 +8,10 @@ function HabitComponent({
   completed,
   emitCompletedStateChangeEvent,
 }: {
-  id: string,
+  id: string;
   name: string;
   completed: boolean | null;
-  emitCompletedStateChangeEvent: Function
+  emitCompletedStateChangeEvent: Function;
 }): React.JSX.Element {
   const [isComplete, setIsComplete] = React.useState<boolean | null>(completed);
 
@@ -22,13 +22,7 @@ function HabitComponent({
   const handleCompleteStateChange = (completeState: boolean) => {
     setIsComplete(completeState);
 
-    emitCompletedStateChangeEvent(id, completeState)
-    // TODO: emit event
-    if (completeState) {
-      // TODO: if all habits are complete for the day: dateHabit.complete = true, iterate streakCount, launch congrats popup, show ads?
-    } else {
-      // TODO: if habit is marked incomplete, dateHabit.complete = false
-    }
+    emitCompletedStateChangeEvent(id, completeState);
   };
 
   return (
