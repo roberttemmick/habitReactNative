@@ -1,8 +1,24 @@
 import React from 'react';
-import {Text} from 'react-native-gesture-handler';
+import AddHabitComponent from '../components/AddHabitComponent';
+import {StyleSheet, View} from 'react-native';
 
 function ChangeHabitsScreen() {
-  return <Text>Change HABITS</Text>;
+  return (
+    <View style={styles.contentWrapper}>
+      <AddHabitComponent />
+
+      <View style={styles.divider} />
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  contentWrapper: {height: '100%', padding: '5%'},
+  divider: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'lightgray',
+    marginHorizontal: '-5%',
+  },
+});
 
 export default ChangeHabitsScreen;
