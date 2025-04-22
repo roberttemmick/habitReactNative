@@ -1,27 +1,33 @@
 import React from 'react';
 import {View, Text, StyleSheet, Button} from 'react-native';
 
-function AddHabitComponent() {
-  const handleAddHabit = () => {};
+function AddHabitComponent({
+  addHabitEventEmitter,
+}: {
+  addHabitEventEmitter: Function;
+}) {
+  const handleAddHabit = () => {
+    // TODO: create form
+
+    const newHabit = {
+      id: Math.random(),
+      name: 'new habit',
+    };
+
+    addHabitEventEmitter(newHabit);
+  };
 
   return (
     <View style={styles.habitWrapper}>
       <Text style={styles.habitName} numberOfLines={2}>
         New Habit
       </Text>
-      <View style={styles.buttonWrapper}>
-        <Button title="Add" onPress={() => handleAddHabit()} />
-      </View>
+      <Button title="Add" onPress={() => handleAddHabit()} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  buttonWrapper: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   habitName: {
     fontSize: 24,
     fontWeight: 200,
@@ -38,9 +44,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  icon: {
-    margin: 0,
   },
 });
 

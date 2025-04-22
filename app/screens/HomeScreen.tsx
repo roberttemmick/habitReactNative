@@ -5,14 +5,14 @@ import HabitsList from '../components/HabitsList';
 import moment from 'moment';
 import {fromDateId, toDateId} from '@marceloterreiro/flash-calendar';
 import {DateHabit, Habit} from '../types/types';
-import {MOCKDATA} from '../lib/mockData';
+import {MOCKDATEHABITS} from '../lib/mockData';
 
 function HomeScreen(): React.JSX.Element {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const selectedDateFormatted = moment(selectedDate).format('MMM Do YYYY');
   const todayFormatted = moment().format('MMM Do YYYY');
 
-  const [dateHabits, setDateHabits] = useState<DateHabit[]>(MOCKDATA);
+  const [dateHabits, setDateHabits] = useState<DateHabit[]>(MOCKDATEHABITS);
 
   const getSelectedDateHabit = useCallback(
     (dateId: string): DateHabit => {

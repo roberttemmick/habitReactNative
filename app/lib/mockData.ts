@@ -1,9 +1,19 @@
 import {toDateId} from '@marceloterreiro/flash-calendar';
-import {DateHabit} from '../types/types';
+import {DateHabit, Habit} from '../types/types';
 
 const today = new Date();
 
-export const MOCKDATA: DateHabit[] = [
+export const MOCKHABITS: Habit[] = [
+  {id: '1', name: 'No sugar'},
+  {id: '2', name: 'No alcohol'},
+  {id: '3', name: 'Meditate'},
+  {
+    id: '4',
+    name: 'Take medication',
+  },
+];
+
+export const MOCKDATEHABITS: DateHabit[] = [
   {
     dateId: toDateId(today),
     completed: false,
