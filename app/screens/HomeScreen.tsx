@@ -59,7 +59,6 @@ function HomeScreen(): React.JSX.Element {
   const getStreakCount = useCallback((): number => {
     let counter = 0;
 
-    console.log('!!!', getSelectedDateHabit(toDateId(new Date())));
     if (getSelectedDateHabit(toDateId(new Date())).completed) {
       counter++;
     }
