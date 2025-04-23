@@ -10,6 +10,7 @@ function ChangeHabitsScreen() {
 
   const handleAddHabit = (newHabit: Habit) => {
     const updatedHabitsList = habits.concat([newHabit]);
+    console.log('updatedhabitslist', updatedHabitsList);
     setHabits(updatedHabitsList);
   };
   return (

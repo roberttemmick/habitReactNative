@@ -1,28 +1,37 @@
 import React from 'react';
-import {View, Text, StyleSheet, Button} from 'react-native';
+import {View, StyleSheet, Button, TextInput} from 'react-native';
 
 function AddHabitComponent({
   addHabitEventEmitter,
 }: {
   addHabitEventEmitter: Function;
 }) {
-  const handleAddHabit = () => {
-    // TODO: create form
+  const [newHabitName, setNewHabitName] = React.useState<string>('');
 
+  const handleAddHabit = () => {
     const newHabit = {
       id: Math.random(),
-      name: 'new habit',
+      name: newHabitName,
     };
 
     addHabitEventEmitter(newHabit);
+
+    setNewHabitName('');
   };
 
   return (
     <View style={styles.habitWrapper}>
-      <Text style={styles.habitName} numberOfLines={2}>
-        New Habit
-      </Text>
-      <Button title="Add" onPress={() => handleAddHabit()} />
+      <TextInput
+        style={styles.habitName}
+        value={newHabitName}
+        placeholder="New Habit"
+        onChangeText={setNewHabitName}
+      />
+      <Button
+        title="Add"
+        onPress={() => handleAddHabit()}
+        disabled={newHabitName.length === 0}
+      />
     </View>
   );
 }
