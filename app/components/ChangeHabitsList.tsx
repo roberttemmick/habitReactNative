@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {View, StyleSheet, Text, TextInput} from 'react-native';
+import {View, StyleSheet, TextInput} from 'react-native';
 import {Habit} from '../types/types';
 import {IconButton} from 'react-native-paper';
 import DraggableFlatList, {
@@ -11,53 +11,61 @@ import SwipeableItem from 'react-native-swipeable-item';
 function ChangeHabitsList(props: {habits: Habit[]}) {
   const [habits, setHabits] = useState<Habit[]>(props.habits);
 
-  const handleDelete = (habit: Habit) => {
-    console.log('DELETE', habit);
-    // TODO: Delete habit
+  const handleDelete = (id: string) => {
+    setHabits(prevHabits => prevHabits.filter(habit => habit.id !== id));
   };
 
-  const onUpdateHabitName = (updatedName: string) => {
-    // TODO: Update habit name
-    console.log('UPDATED NAME', updatedName);
-  };
+  const onUpdateHabitName = useCallback((id: string, updatedName: string) => {
+    if (updatedName.length === 0) {
+      handleDelete(id);
+    } else {
+      setHabits(prevHabits =>
+        prevHabits.map(habit =>
+          habit.id === id ? {...habit, name: updatedName} : habit,
+        ),
+      );
+    }
+  }, []);
 
-  const renderItem = useCallback(({item, drag}: RenderItemParams<Habit>) => {
-    return (
-      <SwipeableItem
-        key={item.id}
-        item={item}
-        snapPointsLeft={[68]}
-        swipeDamping={1}
-        renderUnderlayLeft={() => (
-          <View style={styles.deleteHabitButtonWrapper}>
+  const renderItem = useCallback(
+    ({item, drag}: RenderItemParams<Habit>) => {
+      return (
+        <SwipeableItem
+          key={item.id}
+          item={item}
+          snapPointsLeft={[68]}
+          swipeDamping={1}
+          renderUnderlayLeft={() => (
+            <View style={styles.deleteHabitButtonWrapper}>
+              <IconButton
+                style={styles.icon}
+                icon="delete-outline"
+                iconColor={'darkred'}
+                size={48}
+                onPress={() => handleDelete(item.id)}
+              />
+            </View>
+          )}>
+          <View style={styles.habitWrapper} key={item.id}>
+            <TextInput
+              style={styles.habitName}
+              value={item.name}
+              onChangeText={text => onUpdateHabitName(item.id, text)}
+            />
+
             <IconButton
               style={styles.icon}
-              icon="delete-outline"
-              iconColor={'darkred'}
+              icon="menu"
+              iconColor={'lightgray'}
               size={48}
-              onPress={() => handleDelete(item)}
+              onLongPress={drag}
             />
           </View>
-        )}>
-        <View style={styles.habitWrapper} key={item.id}>
-          <TextInput
-            style={styles.habitName}
-            value={item.name}
-            // placeholder="New Habit"
-            onChangeText={onUpdateHabitName}
-          />
-
-          <IconButton
-            style={styles.icon}
-            icon="menu"
-            iconColor={'lightgray'}
-            size={48}
-            onLongPress={drag}
-          />
-        </View>
-      </SwipeableItem>
-    );
-  }, []);
+        </SwipeableItem>
+      );
+    },
+    [onUpdateHabitName],
+  );
 
   return (
     <GestureHandlerRootView>
