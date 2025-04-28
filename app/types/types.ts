@@ -1,5 +1,5 @@
 export interface Habit {
-  id: string;
+  id: number;
   name: string;
 }
 
@@ -14,7 +14,7 @@ export interface DateHabit {
 }
 
 export interface User {
-  id: string;
+  id: number;
   email: string;
   password: string;
   dateHabits: DateHabit[];

@@ -12,3 +12,23 @@ export const fetchHabits = async (userId: number) => {
     }
   }
 };
+
+export const updateHabit = async (
+  userId: number,
+  habitId: number,
+  name: string,
+) => {
+  try {
+    const response = await axios.put(`${API_URL}/habits`, {
+      userId,
+      habitId,
+      name,
+    });
+    console.log('!!!!!!!!', response.data);
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to fetch habits: ${error.message}`);
+    }
+  }
+};

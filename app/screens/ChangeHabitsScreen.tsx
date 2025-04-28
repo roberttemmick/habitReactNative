@@ -12,7 +12,6 @@ function ChangeHabitsScreen() {
     const fetchData = async () => {
       try {
         const response = await fetchHabits(1);
-        console.log('!!!!', response);
         setHabits(response);
       } catch (err) {
         console.log('ERROR', err);

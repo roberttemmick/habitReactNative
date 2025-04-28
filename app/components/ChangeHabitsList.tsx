@@ -7,6 +7,7 @@ import DraggableFlatList, {
 } from 'react-native-draggable-flatlist';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import SwipeableItem from 'react-native-swipeable-item';
+import {updateHabit} from '../api/habits';
 
 function ChangeHabitsList(props: {habits: Habit[]}) {
   const [habits, setHabits] = useState<Habit[]>(props.habits);
@@ -15,21 +16,28 @@ function ChangeHabitsList(props: {habits: Habit[]}) {
     setHabits(props.habits);
   }, [props.habits]);
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: number) => {
     setHabits(prevHabits => prevHabits.filter(habit => habit.id !== id));
   };
 
-  const onUpdateHabitName = useCallback((id: string, updatedName: string) => {
-    if (updatedName.length === 0) {
-      handleDelete(id);
-    } else {
-      setHabits(prevHabits =>
-        prevHabits.map(habit =>
-          habit.id === id ? {...habit, name: updatedName} : habit,
-        ),
-      );
-    }
-  }, []);
+  const handleLocalHabitNameChange = (id: number, newName: string) => {
+    setHabits(prevHabits =>
+      prevHabits.map(habit =>
+        habit.id === id ? {...habit, name: newName} : habit,
+      ),
+    );
+  };
+
+  const onUpdateHabitName = useCallback(
+    async (id: number, updatedName: string) => {
+      if (updatedName.length === 0) {
+        handleDelete(id);
+      } else {
+        await updateHabit(1, id, updatedName);
+      }
+    },
+    [],
+  );
 
   const renderItem = useCallback(
     ({item, drag}: RenderItemParams<Habit>) => {
@@ -54,7 +62,8 @@ function ChangeHabitsList(props: {habits: Habit[]}) {
             <TextInput
               style={styles.habitName}
               value={item.name}
-              onChangeText={text => onUpdateHabitName(item.id, text)}
+              onChangeText={text => handleLocalHabitNameChange(item.id, text)}
+              onBlur={() => onUpdateHabitName(item.id, item.name)}
             />
 
             <IconButton

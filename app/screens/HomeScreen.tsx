@@ -30,7 +30,6 @@ function HomeScreen(): React.JSX.Element {
     (dateId: string): DateHabit => {
       return (
         dateHabits.find((dateHabit: DateHabit) => {
-          console.log('getSelectedDateHabit', dateHabit);
           return dateHabit.dateId === dateId;
         }) || {dateId: toDateId(selectedDate), completed: false, habits: []}
       );
