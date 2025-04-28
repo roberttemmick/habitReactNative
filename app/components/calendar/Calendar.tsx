@@ -16,109 +16,6 @@ const MONTH_HEADER_HEIGHT = 40;
 const WEEK_DAYS_HEIGHT = 25;
 const FOOTER_HEIGHT = 30;
 
-const styles = StyleSheet.create({
-  calendarContainer: {
-    backgroundColor: 'white',
-    borderRadius: 16,
-    borderColor: 'lightgray',
-    borderWidth: 1,
-    borderStyle: 'solid',
-  },
-  calendarFooter: {
-    height: FOOTER_HEIGHT,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  calendarFooterLegend: {
-    width: 20,
-    height: 20,
-    borderColor: calendarTokens.colors.secondary,
-    borderWidth: 2,
-  },
-  calendarFooterText: {
-    fontStyle: 'italic',
-  },
-  checkIcon: {
-    color: 'green',
-    fontSize: 24,
-  },
-  dayIconWrapper: {
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  weekDivider: {
-    height: 1,
-    backgroundColor: 'lightgray',
-    position: 'absolute',
-    left: 8,
-    right: 8,
-    bottom: 4,
-  },
-});
-
-const calendarTheme: CalendarTheme = {
-  rowMonth: {
-    container: {
-      height: MONTH_HEADER_HEIGHT,
-    },
-    content: {
-      fontSize: 17,
-      fontWeight: 200,
-      width: 200,
-      textAlign: 'center',
-    },
-  },
-  itemWeekName: {
-    container: {
-      marginBottom: 4,
-    },
-  },
-  itemDay: {
-    base: () => ({
-      container: {
-        padding: 0,
-        borderRadius: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-      },
-    }),
-    today: () => ({
-      container: {
-        borderWidth: 1,
-        borderColor: 'lightgray',
-        borderTopLeftRadius: '5%',
-        borderTopRightRadius: '5%',
-        borderBottomLeftRadius: '5%',
-        borderBottomRightRadius: '5%',
-      },
-    }),
-    idle: ({isDifferentMonth}) => ({
-      content: isDifferentMonth
-        ? {
-            color: calendarTokens.colors.content.disabled,
-          }
-        : undefined,
-    }),
-    active: () => ({
-      container: {
-        backgroundColor: 'lightgray',
-        borderWidth: 1,
-        borderColor: 'lightgray',
-        borderTopLeftRadius: '5%',
-        borderTopRightRadius: '5%',
-        borderBottomLeftRadius: '5%',
-        borderBottomRightRadius: '5%',
-      },
-      content: {
-        color: calendarTokens.colors.content.inverse.primary,
-      },
-    }),
-  },
-};
-
 interface CustomCalendarProps extends CalendarProps {
   onCalendarDayPress: (dateId: string) => void;
   onPreviousMonthPress: () => void;
@@ -250,3 +147,106 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
     </View>
   );
 });
+
+const styles = StyleSheet.create({
+  calendarContainer: {
+    backgroundColor: 'white',
+    borderRadius: 16,
+    borderColor: 'lightgray',
+    borderWidth: 1,
+    borderStyle: 'solid',
+  },
+  calendarFooter: {
+    height: FOOTER_HEIGHT,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  calendarFooterLegend: {
+    width: 20,
+    height: 20,
+    borderColor: calendarTokens.colors.secondary,
+    borderWidth: 2,
+  },
+  calendarFooterText: {
+    fontStyle: 'italic',
+  },
+  checkIcon: {
+    color: 'green',
+    fontSize: 24,
+  },
+  dayIconWrapper: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  weekDivider: {
+    height: 1,
+    backgroundColor: 'lightgray',
+    position: 'absolute',
+    left: 8,
+    right: 8,
+    bottom: 4,
+  },
+});
+
+const calendarTheme: CalendarTheme = {
+  rowMonth: {
+    container: {
+      height: MONTH_HEADER_HEIGHT,
+    },
+    content: {
+      fontSize: 17,
+      fontWeight: 200,
+      width: 200,
+      textAlign: 'center',
+    },
+  },
+  itemWeekName: {
+    container: {
+      marginBottom: 4,
+    },
+  },
+  itemDay: {
+    base: () => ({
+      container: {
+        padding: 0,
+        borderRadius: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+      },
+    }),
+    today: () => ({
+      container: {
+        borderWidth: 1,
+        borderColor: 'lightgray',
+        borderTopLeftRadius: '5%',
+        borderTopRightRadius: '5%',
+        borderBottomLeftRadius: '5%',
+        borderBottomRightRadius: '5%',
+      },
+    }),
+    idle: ({isDifferentMonth}) => ({
+      content: isDifferentMonth
+        ? {
+            color: calendarTokens.colors.content.disabled,
+          }
+        : undefined,
+    }),
+    active: () => ({
+      container: {
+        backgroundColor: 'lightgray',
+        borderWidth: 1,
+        borderColor: 'lightgray',
+        borderTopLeftRadius: '5%',
+        borderTopRightRadius: '5%',
+        borderBottomLeftRadius: '5%',
+        borderBottomRightRadius: '5%',
+      },
+      content: {
+        color: calendarTokens.colors.content.inverse.primary,
+      },
+    }),
+  },
+};

@@ -1,23 +1,36 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import CalendarWrapper from '../components/calendar/CalendarWrapper';
 import HabitsList from '../components/HabitsList';
 import moment from 'moment';
 import {fromDateId, toDateId} from '@marceloterreiro/flash-calendar';
 import {DateHabit, Habit} from '../types/types';
-import {MOCKDATEHABITS} from '../lib/mockData';
+import {fetchDateHabits} from '../api/dateHabits';
 
 function HomeScreen(): React.JSX.Element {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const selectedDateFormatted = moment(selectedDate).format('MMM Do YYYY');
   const todayFormatted = moment().format('MMM Do YYYY');
+  const [dateHabits, setDateHabits] = useState<DateHabit[]>([]);
 
-  const [dateHabits, setDateHabits] = useState<DateHabit[]>(MOCKDATEHABITS);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetchDateHabits(1);
+        setDateHabits(response);
+      } catch (err) {
+        console.log('ERROR', err);
+        // TODO: Handle error
+      }
+    };
+    fetchData();
+  }, []);
 
   const getSelectedDateHabit = useCallback(
     (dateId: string): DateHabit => {
       return (
         dateHabits.find((dateHabit: DateHabit) => {
+          console.log('getSelectedDateHabit', dateHabit);
           return dateHabit.dateId === dateId;
         }) || {dateId: toDateId(selectedDate), completed: false, habits: []}
       );
@@ -82,15 +95,15 @@ function HomeScreen(): React.JSX.Element {
 
   const [streakCount, setStreakCount] = useState(getStreakCount());
 
-  const calendarMinDateId = useMemo(() => {
-    return dateHabits[dateHabits.length - 1].dateId;
-  }, [dateHabits]);
+  // const calendarMinDateId = useMemo(() => {
+  //   return dateHabits[dateHabits.length - 1].dateId;
+  // }, [dateHabits]);
 
   return (
     <ScrollView style={styles.contentWrapper}>
       <View>
         <CalendarWrapper
-          calendarMinDateId={calendarMinDateId}
+          // calendarMinDateId={calendarMinDateId}
           dateHabits={dateHabits}
           selectedDateHabit={selectedDateHabit}
           streakCount={streakCount}
