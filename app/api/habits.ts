@@ -2,6 +2,25 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/api'; // Base API URL
 
+export const createHabit = async (
+  userId: number,
+  name: string,
+  dateId: string,
+) => {
+  try {
+    const response = await axios.post(`${API_URL}/habits`, {
+      userId,
+      name,
+      dateId,
+    });
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to create habit: ${error.message}`);
+    }
+  }
+};
+
 export const fetchHabits = async (userId: number) => {
   try {
     const response = await axios.get(`${API_URL}/habits/${userId}`);
@@ -24,11 +43,10 @@ export const updateHabit = async (
       habitId,
       name,
     });
-    console.log('!!!!!!!!', response.data);
     return response.data;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      throw new Error(`Failed to fetch habits: ${error.message}`);
+      throw new Error(`Failed to update habit: ${error.message}`);
     }
   }
 };

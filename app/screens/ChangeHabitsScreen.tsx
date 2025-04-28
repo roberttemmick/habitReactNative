@@ -3,7 +3,8 @@ import AddHabitComponent from '../components/AddHabitComponent';
 import {StyleSheet, View} from 'react-native';
 import ChangeHabitsList from '../components/ChangeHabitsList';
 import {Habit} from '../types/types';
-import {fetchHabits} from '../api/habits';
+import {createHabit, fetchHabits} from '../api/habits';
+import { toDateId } from "@marceloterreiro/flash-calendar";
 
 function ChangeHabitsScreen() {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -21,9 +22,10 @@ function ChangeHabitsScreen() {
     fetchData();
   }, []);
 
-  const handleAddHabit = (newHabit: Habit) => {
-    const updatedHabitsList = habits.concat([newHabit]);
-    console.log('updatedhabitslist', updatedHabitsList);
+  const handleAddHabit = async (newHabitName: string) => {
+    const response = await createHabit(1, newHabitName, toDateId(new Date()));
+    const updatedHabitsList = habits.concat([response]);
+
     setHabits(updatedHabitsList);
   };
   return (

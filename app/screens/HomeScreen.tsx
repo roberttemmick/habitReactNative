@@ -6,6 +6,7 @@ import moment from 'moment';
 import {fromDateId, toDateId} from '@marceloterreiro/flash-calendar';
 import {DateHabit, HabitEntry} from '../types/types';
 import {fetchDateHabits} from '../api/dateHabits';
+import {useFocusEffect} from '@react-navigation/native';
 
 function HomeScreen(): React.JSX.Element {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -13,18 +14,21 @@ function HomeScreen(): React.JSX.Element {
   const todayFormatted = moment().format('MMM Do YYYY');
   const [dateHabits, setDateHabits] = useState<DateHabit[]>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetchDateHabits(1);
-        setDateHabits(response);
-      } catch (err) {
-        console.log('ERROR', err);
-        // TODO: Handle error
-      }
-    };
-    fetchData();
-  }, []);
+  const fetchData = async () => {
+    try {
+      const response = await fetchDateHabits(1);
+      setDateHabits(response);
+    } catch (err) {
+      console.log('ERROR', err);
+      // TODO: Handle error
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, []),
+  );
 
   const getSelectedDateHabit = useCallback(
     (dateId: string): DateHabit => {

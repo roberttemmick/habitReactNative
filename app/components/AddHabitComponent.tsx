@@ -9,12 +9,7 @@ function AddHabitComponent({
   const [newHabitName, setNewHabitName] = React.useState<string>('');
 
   const handleAddHabit = () => {
-    const newHabit = {
-      id: Math.random(),
-      name: newHabitName,
-    };
-
-    addHabitEventEmitter(newHabit);
+    addHabitEventEmitter(newHabitName);
 
     setNewHabitName('');
   };
