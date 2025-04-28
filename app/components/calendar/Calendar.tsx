@@ -9,7 +9,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import {calendarTokens} from './utils';
 import {ChevronButton} from './CalendarButton';
 import CircularProgress from 'react-native-circular-progress-indicator';
-import {DateHabit, Habit} from '../../types/types';
+import {DateHabit, HabitEntry} from '../../types/types';
 
 const DAY_HEIGHT = 46;
 const MONTH_HEADER_HEIGHT = 40;
@@ -30,7 +30,7 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
   const getCompletedCount = (dateHabit: DateHabit): number => {
     let counter = 0;
 
-    dateHabit.habits.forEach((habit: Habit) => {
+    dateHabit.habits.forEach((habit: HabitEntry) => {
       habit.completed && counter++;
     });
 

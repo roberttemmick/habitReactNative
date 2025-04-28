@@ -1,12 +1,26 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import AddHabitComponent from '../components/AddHabitComponent';
 import {StyleSheet, View} from 'react-native';
 import ChangeHabitsList from '../components/ChangeHabitsList';
-import {MOCKHABITS} from '../lib/mockData';
 import {Habit} from '../types/types';
+import {fetchHabits} from '../api/habits';
 
 function ChangeHabitsScreen() {
-  const [habits, setHabits] = useState<Habit[]>(MOCKHABITS);
+  const [habits, setHabits] = useState<Habit[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetchHabits(1);
+        console.log('!!!!', response);
+        setHabits(response);
+      } catch (err) {
+        console.log('ERROR', err);
+        // TODO: Handle error
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleAddHabit = (newHabit: Habit) => {
     const updatedHabitsList = habits.concat([newHabit]);

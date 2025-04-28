@@ -4,7 +4,7 @@ import CalendarWrapper from '../components/calendar/CalendarWrapper';
 import HabitsList from '../components/HabitsList';
 import moment from 'moment';
 import {fromDateId, toDateId} from '@marceloterreiro/flash-calendar';
-import {DateHabit, Habit} from '../types/types';
+import {DateHabit, HabitEntry} from '../types/types';
 import {fetchDateHabits} from '../api/dateHabits';
 
 function HomeScreen(): React.JSX.Element {
@@ -46,7 +46,7 @@ function HomeScreen(): React.JSX.Element {
     setSelectedDate(fromDateId(dateId));
   };
 
-  const handleCompleteStateChange = (habits: Habit[]) => {
+  const handleCompleteStateChange = (habits: HabitEntry[]) => {
     const allTasksCompleted = habits.every(task => task.completed);
 
     const updatedDateHabit = {

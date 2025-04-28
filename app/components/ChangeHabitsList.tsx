@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {View, StyleSheet, TextInput} from 'react-native';
 import {Habit} from '../types/types';
 import {IconButton} from 'react-native-paper';
@@ -10,6 +10,10 @@ import SwipeableItem from 'react-native-swipeable-item';
 
 function ChangeHabitsList(props: {habits: Habit[]}) {
   const [habits, setHabits] = useState<Habit[]>(props.habits);
+
+  useEffect(() => {
+    setHabits(props.habits);
+  }, [props.habits]);
 
   const handleDelete = (id: string) => {
     setHabits(prevHabits => prevHabits.filter(habit => habit.id !== id));
