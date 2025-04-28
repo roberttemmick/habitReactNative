@@ -7,7 +7,8 @@ import DraggableFlatList, {
 } from 'react-native-draggable-flatlist';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import SwipeableItem from 'react-native-swipeable-item';
-import {updateHabit} from '../api/habits';
+import {deleteHabit, updateHabit} from '../api/habits';
+import {toDateId} from '@marceloterreiro/flash-calendar';
 
 function ChangeHabitsList(props: {habits: Habit[]}) {
   const [habits, setHabits] = useState<Habit[]>(props.habits);
@@ -16,7 +17,9 @@ function ChangeHabitsList(props: {habits: Habit[]}) {
     setHabits(props.habits);
   }, [props.habits]);
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
+    await deleteHabit(1, id, toDateId(new Date()));
+
     setHabits(prevHabits => prevHabits.filter(habit => habit.id !== id));
   };
 

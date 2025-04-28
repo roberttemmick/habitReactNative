@@ -21,6 +21,23 @@ export const createHabit = async (
   }
 };
 
+export const deleteHabit = async (
+  userId: number,
+  habitId: number,
+  dateId: string,
+) => {
+  try {
+    const response = await axios.delete(
+      `${API_URL}/habits/${userId}/${habitId}/${dateId}`,
+    );
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to create habit: ${error.message}`);
+    }
+  }
+};
+
 export const fetchHabits = async (userId: number) => {
   try {
     const response = await axios.get(`${API_URL}/habits/${userId}`);
