@@ -12,3 +12,21 @@ export const fetchDateHabits = async (userId: number) => {
     }
   }
 };
+
+export const updateDateHabits = async (
+  userId: number,
+  dateHabitId: string,
+  completed: boolean,
+) => {
+  try {
+    const response = await axios.put(`${API_URL}/date-habits/${userId}`, {
+      dateHabitId,
+      completed,
+    });
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to update dateHabit: ${error.message}`);
+    }
+  }
+};

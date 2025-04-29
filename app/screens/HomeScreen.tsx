@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import CalendarWrapper from '../components/calendar/CalendarWrapper';
 import HabitsList from '../components/HabitsList';
@@ -49,7 +49,7 @@ function HomeScreen(): React.JSX.Element {
     setSelectedDate(fromDateId(dateId));
   };
 
-  const handleCompleteStateChange = (habits: HabitEntry[]) => {
+  const handleDateHabitCompleteStateChange = (habits: HabitEntry[]) => {
     const allTasksCompleted = habits.every(task => task.completed);
 
     const updatedDateHabit = {
@@ -98,15 +98,15 @@ function HomeScreen(): React.JSX.Element {
 
   const [streakCount, setStreakCount] = useState(getStreakCount());
 
-  // const calendarMinDateId = useMemo(() => {
-  //   return dateHabits[dateHabits.length - 1].dateId;
-  // }, [dateHabits]);
+  const calendarMinDateId = useMemo(() => {
+    return dateHabits[0]?.dateId;
+  }, [dateHabits]);
 
   return (
     <ScrollView style={styles.contentWrapper}>
       <View>
         <CalendarWrapper
-          // calendarMinDateId={calendarMinDateId}
+          calendarMinDateId={calendarMinDateId}
           dateHabits={dateHabits}
           selectedDateHabit={selectedDateHabit}
           streakCount={streakCount}
@@ -123,7 +123,7 @@ function HomeScreen(): React.JSX.Element {
       <View>
         <HabitsList
           habits={selectedDateHabit.habits}
-          emitCompletedStateChangeEvent={handleCompleteStateChange}
+          emitCompletedStateChangeEvent={handleDateHabitCompleteStateChange}
         />
       </View>
     </ScrollView>
