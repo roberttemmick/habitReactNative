@@ -11,11 +11,6 @@ interface ChangeHabitsListItemProps {
 function ChangeHabitsListItem(props: ChangeHabitsListItemProps) {
   const [habitName, setHabitName] = useState<string>(props.habit.name);
 
-  const onUpdateHabitName = (updatedName: string) => {
-    // TODO: Update habit name
-    console.log('UPDATED NAME', updatedName);
-  };
-
   return (
     <View style={styles.habitWrapper} key={props.habit.id}>
       <TextInput

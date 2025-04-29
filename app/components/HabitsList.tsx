@@ -1,18 +1,21 @@
 import React from 'react';
 import {View} from 'react-native';
 import HabitComponent from './HabitComponent';
-import {Habit} from '../types/types';
+import {HabitEntry} from '../types/types';
 
 function HabitsList({
   habits,
   emitCompletedStateChangeEvent,
 }: {
-  habits: Habit[];
+  habits: HabitEntry[];
   emitCompletedStateChangeEvent: Function;
 }) {
-  const handleCompleteStateChange = (id: string, completeState: boolean) => {
-    habits.find((habit: Habit) => {
-      return habit.id === id;
+  const handleCompleteStateChange = (
+    habitEntryId: number,
+    completeState: boolean,
+  ) => {
+    habits.find((habit: HabitEntry) => {
+      return habit.habitEntryId === habitEntryId;
     })!.completed = completeState;
 
     emitCompletedStateChangeEvent(habits);
@@ -24,9 +27,9 @@ function HabitsList({
         return (
           <HabitComponent
             key={item.id}
-            id={item.id}
+            id={item.habitEntryId}
             name={item.name}
-            completed={item.completed}
+            completed={item.completed!}
             emitCompletedStateChangeEvent={handleCompleteStateChange}
           />
         );

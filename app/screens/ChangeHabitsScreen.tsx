@@ -4,7 +4,7 @@ import {StyleSheet, View} from 'react-native';
 import ChangeHabitsList from '../components/ChangeHabitsList';
 import {Habit} from '../types/types';
 import {createHabit, fetchHabits} from '../api/habits';
-import { toDateId } from "@marceloterreiro/flash-calendar";
+import {toDateId} from '@marceloterreiro/flash-calendar';
 
 function ChangeHabitsScreen() {
   const [habits, setHabits] = useState<Habit[]>([]);

@@ -4,6 +4,7 @@ export interface Habit {
 }
 
 export interface HabitEntry extends Habit {
+  habitEntryId: number;
   completed?: boolean | null;
 }
 

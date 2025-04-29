@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {IconButton} from 'react-native-paper';
+import {updateHabitEntry} from '../api/habitEntries';
 
 function HabitComponent({
   id,
@@ -8,7 +9,7 @@ function HabitComponent({
   completed,
   emitCompletedStateChangeEvent,
 }: {
-  id: string;
+  id: number;
   name: string;
   completed: boolean | null;
   emitCompletedStateChangeEvent: Function;
@@ -19,8 +20,15 @@ function HabitComponent({
     setIsComplete(completed);
   }, [completed]);
 
-  const handleCompleteStateChange = (completeState: boolean) => {
+  const handleCompleteStateChange = async (completeState: boolean) => {
     setIsComplete(completeState);
+
+    try {
+      await updateHabitEntry(id, completeState);
+    } catch (err) {
+      console.log('ERROR', err);
+      // TODO: Handle error
+    }
 
     emitCompletedStateChangeEvent(id, completeState);
   };
