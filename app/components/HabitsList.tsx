@@ -3,27 +3,27 @@ import {View} from 'react-native';
 import HabitComponent from './HabitComponent';
 import {HabitEntry} from '../types/types';
 
-function HabitsList({
-  habits,
+function HabitEntriesList({
+  habitEntries,
   emitCompletedStateChangeEvent,
 }: {
-  habits: HabitEntry[];
+  habitEntries: HabitEntry[];
   emitCompletedStateChangeEvent: Function;
 }) {
   const handleCompleteStateChange = (
     habitEntryId: number,
     completeState: boolean,
   ) => {
-    habits.find((habit: HabitEntry) => {
+    habitEntries.find((habit: HabitEntry) => {
       return habit.habitEntryId === habitEntryId;
     })!.completed = completeState;
 
-    emitCompletedStateChangeEvent(habits);
+    emitCompletedStateChangeEvent(habitEntries);
   };
 
   return (
     <View>
-      {habits.map(item => {
+      {habitEntries.map(item => {
         return (
           <HabitComponent
             key={item.id}
@@ -38,4 +38,4 @@ function HabitsList({
   );
 }
 
-export default HabitsList;
+export default HabitEntriesList;

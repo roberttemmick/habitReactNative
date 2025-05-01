@@ -30,7 +30,7 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
   const getCompletedCount = (dateHabit: DateHabit): number => {
     let counter = 0;
 
-    dateHabit.habits.forEach((habit: HabitEntry) => {
+    dateHabit.habitEntries.forEach((habit: HabitEntry) => {
       habit.completed && counter++;
     });
 
@@ -38,7 +38,7 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
   };
 
   const getDateCompletedState = (dateHabit: DateHabit): boolean => {
-    return getCompletedCount(dateHabit) === dateHabit.habits.length;
+    return getCompletedCount(dateHabit) === dateHabit.habitEntries.length;
   };
 
   let dateHabitDay: DateHabit;
@@ -49,7 +49,7 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
     }) || {
       dateId: toDateId(new Date(props.selectedDateHabit.dateId)),
       completed: false,
-      habits: [],
+      habitEntries: [],
     };
 
     return dateHabitDay;
@@ -107,7 +107,7 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
                     {day.displayLabel} {'\n'}
                   </Text>
                   {!day.isDisabled &&
-                    getDateHabitDay(day).habits.length > 0 && (
+                    getDateHabitDay(day).habitEntries.length > 0 && (
                       <View style={styles.dayIconWrapper}>
                         {getDateCompletedState(getDateHabitDay(day)) ? (
                           <Text style={styles.checkIcon}>&#x2713;</Text>
@@ -115,7 +115,7 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
                           <CircularProgress
                             value={
                               (getCompletedCount(getDateHabitDay(day)) /
-                                getDateHabitDay(day).habits.length) *
+                                getDateHabitDay(day).habitEntries.length) *
                               100
                             }
                             radius={14}
@@ -125,7 +125,7 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
                             activeStrokeColor="green"
                             title={`${getCompletedCount(
                               getDateHabitDay(day),
-                            )}/${getDateHabitDay(day).habits.length}`}
+                            )}/${getDateHabitDay(day).habitEntries.length}`}
                             titleFontSize={10}
                             showProgressValue={false}
                           />

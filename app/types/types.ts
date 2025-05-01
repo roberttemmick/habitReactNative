@@ -12,7 +12,7 @@ export interface HabitEntry extends Habit {
 export interface DateHabit {
   dateId: string;
   completed: boolean;
-  habits: HabitEntry[];
+  habitEntries: HabitEntry[];
 }
 
 export interface User {
