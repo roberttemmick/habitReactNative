@@ -55,6 +55,14 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
     return dateHabitDay;
   };
 
+  const getCompletedPercentage = (day: CalendarDayMetadata): number => {
+    return (
+      (getCompletedCount(getDateHabitDay(day)) /
+        getDateHabitDay(day).habitEntries.length) *
+        100 || 1
+    );
+  };
+
   return (
     <View style={styles.calendarContainer}>
       <Calendar.VStack spacing={props.calendarRowVerticalSpacing}>
@@ -113,20 +121,25 @@ export const CustomCalendar = memo((props: CustomCalendarProps) => {
                           <Text style={styles.checkIcon}>&#x2713;</Text>
                         ) : (
                           <CircularProgress
-                            value={
-                              (getCompletedCount(getDateHabitDay(day)) /
-                                getDateHabitDay(day).habitEntries.length) *
-                              100
-                            }
+                            value={getCompletedPercentage(day)}
                             radius={14}
+                            rotation={90}
                             duration={500}
                             activeStrokeWidth={4}
                             inActiveStrokeOpacity={0}
-                            activeStrokeColor="green"
+                            activeStrokeColor={
+                              getCompletedPercentage(day) < 50
+                                ? '#8b0000'
+                                : '#ff8c00'
+                            }
                             title={`${getCompletedCount(
                               getDateHabitDay(day),
                             )}/${getDateHabitDay(day).habitEntries.length}`}
-                            titleFontSize={10}
+                            titleStyle={{
+                              fontWeight: '300',
+                              fontSize: 10,
+                              color: 'black',
+                            }}
                             showProgressValue={false}
                           />
                         )}
