@@ -13,6 +13,7 @@ function ChangeHabitsScreen() {
     const fetchData = async () => {
       try {
         const response = await fetchHabits(1);
+        console.log('HABITS', response);
         setHabits(response);
       } catch (err) {
         console.log('ERROR', err);
@@ -23,7 +24,12 @@ function ChangeHabitsScreen() {
   }, []);
 
   const handleAddHabit = async (newHabitName: string) => {
-    const response = await createHabit(1, newHabitName, toDateId(new Date()));
+    const response = await createHabit(
+      1,
+      newHabitName,
+      toDateId(new Date()),
+      habits.length,
+    );
     const updatedHabitsList = habits.concat([response]);
 
     setHabits(updatedHabitsList);

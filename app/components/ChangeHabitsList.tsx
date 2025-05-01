@@ -7,7 +7,7 @@ import DraggableFlatList, {
 } from 'react-native-draggable-flatlist';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import SwipeableItem from 'react-native-swipeable-item';
-import {deleteHabit, updateHabit} from '../api/habits';
+import {deleteHabit, updateHabit, updateHabitsBatch} from '../api/habits';
 import {toDateId} from '@marceloterreiro/flash-calendar';
 
 function ChangeHabitsList(props: {habits: Habit[]}) {
@@ -17,11 +17,14 @@ function ChangeHabitsList(props: {habits: Habit[]}) {
     setHabits(props.habits);
   }, [props.habits]);
 
-  const handleDelete = async (id: number) => {
-    await deleteHabit(1, id, toDateId(new Date()));
-
-    setHabits(prevHabits => prevHabits.filter(habit => habit.id !== id));
-  };
+  const handleDelete = useCallback(
+    async (id: number) => {
+      await deleteHabit(1, id, toDateId(new Date()));
+      const prevHabits = habits.filter(habit => habit.id !== id);
+      updateHabitsSortOrder(prevHabits);
+    },
+    [habits],
+  );
 
   const handleLocalHabitNameChange = (id: number, newName: string) => {
     setHabits(prevHabits =>
@@ -31,15 +34,30 @@ function ChangeHabitsList(props: {habits: Habit[]}) {
     );
   };
 
+  const updateHabitsSortOrder = async (sortedHabits: Habit[]) => {
+    const updatedHabits = sortedHabits.map((habit: Habit, index: number) => ({
+      ...habit,
+      sortOrder: index,
+    }));
+
+    setHabits(updatedHabits);
+
+    try {
+      await updateHabitsBatch(1, updatedHabits);
+    } catch (error) {
+      console.error('Failed to update sort order', error);
+    }
+  };
+
   const onUpdateHabitName = useCallback(
-    async (id: number, updatedName: string) => {
+    async (id: number, updatedName: string, sortOrder: number) => {
       if (updatedName.length === 0) {
         handleDelete(id);
       } else {
-        await updateHabit(1, id, updatedName);
+        await updateHabit(1, id, updatedName, sortOrder);
       }
     },
-    [],
+    [handleDelete],
   );
 
   const renderItem = useCallback(
@@ -66,7 +84,9 @@ function ChangeHabitsList(props: {habits: Habit[]}) {
               style={styles.habitName}
               value={item.name}
               onChangeText={text => handleLocalHabitNameChange(item.id, text)}
-              onBlur={() => onUpdateHabitName(item.id, item.name)}
+              onBlur={() =>
+                onUpdateHabitName(item.id, item.name, item.sortOrder)
+              }
             />
 
             <IconButton
@@ -80,7 +100,7 @@ function ChangeHabitsList(props: {habits: Habit[]}) {
         </SwipeableItem>
       );
     },
-    [onUpdateHabitName],
+    [handleDelete, onUpdateHabitName],
   );
 
   return (
@@ -89,7 +109,7 @@ function ChangeHabitsList(props: {habits: Habit[]}) {
         data={habits}
         renderItem={renderItem}
         keyExtractor={item => `draggable-item-${item.id}`}
-        onDragEnd={({data}) => setHabits(data)}
+        onDragEnd={({data}) => updateHabitsSortOrder(data)}
       />
     </GestureHandlerRootView>
   );

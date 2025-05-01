@@ -1,6 +1,7 @@
 export interface Habit {
   id: number;
   name: string;
+  sortOrder: number;
 }
 
 export interface HabitEntry extends Habit {
