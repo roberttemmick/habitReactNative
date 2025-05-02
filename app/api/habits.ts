@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {Habit} from '../types/types';
 
-const API_URL = 'http://localhost:3000/api'; // Base API URL
+const API_URL = 'http://localhost:3000/api/habits'; // Base API URL
 
 export const createHabit = async (
   userId: number,
@@ -10,7 +10,7 @@ export const createHabit = async (
   sortOrder: number,
 ) => {
   try {
-    const response = await axios.post(`${API_URL}/habits`, {
+    const response = await axios.post(`${API_URL}`, {
       userId,
       name,
       dateId,
@@ -31,7 +31,7 @@ export const deleteHabit = async (
 ) => {
   try {
     const response = await axios.delete(
-      `${API_URL}/habits/${userId}/${habitId}/${dateId}`,
+      `${API_URL}/${userId}/${habitId}/${dateId}`,
     );
     return response.data;
   } catch (error: unknown) {
@@ -43,7 +43,7 @@ export const deleteHabit = async (
 
 export const fetchHabits = async (userId: number) => {
   try {
-    const response = await axios.get(`${API_URL}/habits/${userId}`);
+    const response = await axios.get(`${API_URL}/${userId}`);
     return response.data;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -59,7 +59,7 @@ export const updateHabit = async (
   sortOrder: number,
 ) => {
   try {
-    const response = await axios.put(`${API_URL}/habits`, {
+    const response = await axios.put(`${API_URL}`, {
       userId,
       habitId,
       name,
@@ -75,7 +75,7 @@ export const updateHabit = async (
 
 export const updateHabitsBatch = async (userId: number, habits: Habit[]) => {
   try {
-    const response = await axios.put(`${API_URL}/habits/batch-update`, {
+    const response = await axios.put(`${API_URL}/batch-update`, {
       userId,
       habits,
     });

@@ -1,13 +1,13 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api'; // Base API URL
+const API_URL = 'http://localhost:3000/api/habit-entries'; // Base API URL
 
 export const updateHabitEntry = async (
   habitEntryId: number,
   completed: boolean,
 ) => {
   try {
-    const response = await axios.put(`${API_URL}/habit-entries`, {
+    const response = await axios.put(`${API_URL}`, {
       habitEntryId,
       completed,
     });
