@@ -1,11 +1,11 @@
-import axios from 'axios';
 import {DateHabit, Habit} from '../types/types';
+import api from './api';
 
-const API_URL = 'http://localhost:3000/api/date-habits'; // Base API URL
+const route = '/date-habits';
 
 export const fetchDateHabits = async (userId: number) => {
   try {
-    const response = await axios.get(`${API_URL}/${userId}`);
+    const response = await api.get(`${route}/${userId}`);
     return response.data;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -20,7 +20,7 @@ export const createDateHabits = async (
   habits: Habit,
 ) => {
   try {
-    const response = await axios.post(`${API_URL}/${userId}`, {
+    const response = await api.post(`${route}/${userId}`, {
       dateHabits,
       habits,
     });
