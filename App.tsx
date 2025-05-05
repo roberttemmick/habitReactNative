@@ -4,26 +4,32 @@ import {createStaticNavigation} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import ChangeHabitsScreen from './app/screens/ChangeHabitsScreen';
 import SettingsScreen from './app/screens/SettingsScreen';
-import Icon from '@react-native-vector-icons/ionicons';
 import LoginScreen from './app/screens/LoginScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {jwtDecode} from 'jwt-decode';
-
-interface TabBarIconType {
-  focused: boolean;
-  color: string;
-  size: number;
-}
+import {IconButton} from 'react-native-paper';
 
 const RootStack = createBottomTabNavigator({
+  screenOptions: ({route}) => ({
+    tabBarIcon: ({color, size}) => {
+      let iconName: any = '';
+
+      if (route.name === 'Home') {
+        iconName = 'calendar-outline';
+      } else if (route.name === 'Change Habits') {
+        iconName = 'list-status';
+      } else if (route.name === 'Settings') {
+        iconName = 'cog-outline';
+      }
+
+      return <IconButton icon={iconName} size={28} />;
+    },
+    tabBarActiveTintColor: 'tomato',
+    tabBarInactiveTintColor: 'gray',
+  }),
   initialRouteName: 'Home',
   screens: {
-    Home: {
-      screen: HomeScreen,
-      // tabBarIcon: ({color, size}: TabBarIconType) => (
-      //   <Icon name="calendar" size={size} color={color} />
-      // ),
-    },
+    Home: HomeScreen,
     'Change Habits': ChangeHabitsScreen,
     Settings: SettingsScreen,
   },
