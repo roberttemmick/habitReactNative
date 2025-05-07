@@ -29,6 +29,7 @@ function ChangeHabitsScreen() {
       toDateId(new Date()),
       habits.length,
     );
+    console.log('RESPONSE', response);
     const updatedHabitsList = habits.concat([response]);
 
     setHabits(updatedHabitsList);

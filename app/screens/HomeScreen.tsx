@@ -1,13 +1,13 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import CalendarWrapper from '../components/calendar/CalendarWrapper';
-import HabitEntriesList from '../components/HabitsList';
 import moment from 'moment';
 import {fromDateId, toDateId} from '@marceloterreiro/flash-calendar';
 import {DateHabit, HabitEntry} from '../types/types';
 import {createDateHabits, fetchDateHabits} from '../api/dateHabits';
 import {useFocusEffect} from '@react-navigation/native';
 import {fetchHabits} from '../api/habits';
+import HabitEntriesList from '../components/HabitEntriesList';
 
 function HomeScreen(): React.JSX.Element {
   const [selectedDate, setSelectedDate] = useState(new Date());

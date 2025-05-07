@@ -11,7 +11,7 @@ import {IconButton} from 'react-native-paper';
 
 const RootStack = createBottomTabNavigator({
   screenOptions: ({route}) => ({
-    tabBarIcon: ({color, size}) => {
+    tabBarIcon: () => {
       let iconName: any = '';
 
       if (route.name === 'Home') {

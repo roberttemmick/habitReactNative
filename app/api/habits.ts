@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Habit} from '../types/types';
 import api from './api';
 
@@ -30,7 +31,7 @@ export const deleteHabit = async (
   dateId: string,
 ) => {
   try {
-    const response = await api.delete(
+    const response = await api.put(
       `${route}/${userId}/${habitId}/${dateId}`,
     );
     return response.data;
