@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {View, StyleSheet, TextInput} from 'react-native';
 import {Habit} from '../types/types';
 import {IconButton} from 'react-native-paper';
@@ -10,11 +10,20 @@ import SwipeableItem from 'react-native-swipeable-item';
 import {deleteHabit, updateHabit, updateHabitsBatch} from '../api/habits';
 import {toDateId} from '@marceloterreiro/flash-calendar';
 
-function ChangeHabitsList(props: {habits: Habit[]}) {
+function ChangeHabitsList(props: {
+  habits: Habit[];
+  deleteHabitEventEmitter: Function;
+}) {
   const [habits, setHabits] = useState<Habit[]>(props.habits);
+  const previousHabitNames = useRef<{ [id: number]: string }>({});
 
   useEffect(() => {
     setHabits(props.habits);
+    const nameMap: { [id: number]: string } = {};
+    props.habits.forEach(h => {
+      nameMap[h.id] = h.name;
+    });
+    previousHabitNames.current = nameMap;
   }, [props.habits]);
 
   const handleDelete = useCallback(
@@ -22,8 +31,9 @@ function ChangeHabitsList(props: {habits: Habit[]}) {
       await deleteHabit(1, id, toDateId(new Date()));
       const prevHabits = habits.filter(habit => habit.id !== id);
       updateHabitsSortOrder(prevHabits);
+      props.deleteHabitEventEmitter(id);
     },
-    [habits],
+    [habits, props],
   );
 
   const handleLocalHabitNameChange = (id: number, newName: string) => {
@@ -51,10 +61,13 @@ function ChangeHabitsList(props: {habits: Habit[]}) {
 
   const onUpdateHabitName = useCallback(
     async (id: number, updatedName: string, sortOrder: number) => {
+      const prevName = previousHabitNames.current[id];
+
       if (updatedName.length === 0) {
         handleDelete(id);
-      } else {
+      } else if (updatedName !== prevName) {
         await updateHabit(1, id, updatedName, sortOrder);
+        previousHabitNames.current[id] = updatedName;
       }
     },
     [handleDelete],
@@ -85,6 +98,9 @@ function ChangeHabitsList(props: {habits: Habit[]}) {
               value={item.name}
               onChangeText={text => handleLocalHabitNameChange(item.id, text)}
               onBlur={() =>
+                onUpdateHabitName(item.id, item.name, item.sortOrder)
+              }
+              onSubmitEditing={() =>
                 onUpdateHabitName(item.id, item.name, item.sortOrder)
               }
             />

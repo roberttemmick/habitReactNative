@@ -10,7 +10,6 @@ function AddHabitComponent({
 
   const handleAddHabit = () => {
     addHabitEventEmitter(newHabitName);
-
     setNewHabitName('');
   };
 
@@ -21,6 +20,7 @@ function AddHabitComponent({
         value={newHabitName}
         placeholder="New Habit"
         onChangeText={setNewHabitName}
+        onSubmitEditing={() => handleAddHabit()}
       />
       <Button
         title="Add"

@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Habit} from '../types/types';
 import api from './api';
 
@@ -19,6 +18,7 @@ export const createHabit = async (
     });
     return response.data;
   } catch (error: unknown) {
+    console.log(error);
     if (error instanceof Error) {
       throw new Error(`Failed to create habit: ${error.message}`);
     }
@@ -31,13 +31,12 @@ export const deleteHabit = async (
   dateId: string,
 ) => {
   try {
-    const response = await api.put(
-      `${route}/${userId}/${habitId}/${dateId}`,
-    );
+    const response = await api.put(`${route}/${userId}/${habitId}/${dateId}`);
     return response.data;
   } catch (error: unknown) {
+    console.log(error);
     if (error instanceof Error) {
-      throw new Error(`Failed to create habit: ${error.message}`);
+      throw new Error(`Failed to delete habit: ${error.message}`);
     }
   }
 };
@@ -47,6 +46,7 @@ export const fetchHabits = async (userId: number) => {
     const response = await api.get(`${route}/${userId}`);
     return response.data;
   } catch (error: unknown) {
+    console.log(error);
     if (error instanceof Error) {
       throw new Error(`Failed to fetch habits: ${error.message}`);
     }
@@ -68,6 +68,7 @@ export const updateHabit = async (
     });
     return response.data;
   } catch (error: unknown) {
+    console.log(error);
     if (error instanceof Error) {
       throw new Error(`Failed to update habit: ${error.message}`);
     }
@@ -83,6 +84,7 @@ export const updateHabitsBatch = async (userId: number, habits: Habit[]) => {
 
     return response.data;
   } catch (error: unknown) {
+    console.log(error);
     if (error instanceof Error) {
       throw new Error(`Failed to update habits: ${error.message}`);
     }

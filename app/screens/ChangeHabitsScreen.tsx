@@ -23,24 +23,34 @@ function ChangeHabitsScreen() {
   }, []);
 
   const handleAddHabit = async (newHabitName: string) => {
+    console.log('NEW HABIT NAME', newHabitName);
     const response = await createHabit(
       1,
       newHabitName,
       toDateId(new Date()),
       habits.length,
     );
-    console.log('RESPONSE', response);
     const updatedHabitsList = habits.concat([response]);
 
+    console.log('updatedHabitsList', updatedHabitsList);
     setHabits(updatedHabitsList);
   };
+
+  const handleDeleteHabit = (id: number) => {
+    const updatedHabits = habits.filter(habit => id !== habit.id);
+    setHabits(updatedHabits);
+  };
+
   return (
     <View style={styles.contentWrapper}>
       <AddHabitComponent addHabitEventEmitter={handleAddHabit} />
 
       <View style={styles.divider} />
 
-      <ChangeHabitsList habits={habits} />
+      <ChangeHabitsList
+        habits={habits}
+        deleteHabitEventEmitter={handleDeleteHabit}
+      />
     </View>
   );
 }

@@ -2,6 +2,7 @@ export interface Habit {
   id: number;
   name: string;
   sortOrder: number;
+  archived: boolean;
 }
 
 export interface HabitEntry extends Habit {
