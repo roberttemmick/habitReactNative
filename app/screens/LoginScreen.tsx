@@ -13,28 +13,29 @@ function LoginScreen({updateAuthStateEvent}: {updateAuthStateEvent: Function}) {
   const [email, setEmail] = useState('asdf');
   const [password, setPassword] = useState('1234');
   const [confirmPassword, setConfirmPassword] = useState('1234');
+  const [isSignUpMode, setIsSignUpMode] = useState(false);
 
   const onLoginPress = (): void => {
     try {
       const authState = login(email, password);
-      console.log('authState', authState);
-      // updateAuthStateEvent(authState);
+      updateAuthStateEvent(authState);
     } catch (err: unknown) {
       // TODO
     }
   };
 
-  const onSignupPress = (): void => {
+  const onSignpModeChange = (updatedIsSignUpMode: boolean) => {
+    setIsSignUpMode(updatedIsSignUpMode);
+  };
+
+  const onCreateAccountPress = async () => {
     try {
-      console.log('SIGNUP', email, password, confirmPassword);
       if (password !== confirmPassword) {
         // TODO: Show alert if passwords don't match
-        console.log('NO MATCH');
       } else {
-        console.log('MATCH');
-        const authState = signup(email, password);
-        console.log('authState', authState);
-        // updateAuthStateEvent(authState);
+        const authState = await signup(email, password);
+        updateAuthStateEvent(authState);
+        onLoginPress();
       }
     } catch (err: unknown) {
       // TODO
@@ -58,27 +59,50 @@ function LoginScreen({updateAuthStateEvent}: {updateAuthStateEvent: Function}) {
           value={password}
           onChangeText={(event: string) => setPassword(event)}
         />
-        <TextInput
-          placeholder="Confirm Password"
-          secureTextEntry={true}
-          style={styles.input}
-          value={confirmPassword}
-          onChangeText={(event: string) => setConfirmPassword(event)}
-        />
+        {isSignUpMode ? (
+          <TextInput
+            placeholder="Confirm Password"
+            secureTextEntry={true}
+            style={styles.input}
+            value={confirmPassword}
+            onChangeText={(event: string) => setConfirmPassword(event)}
+          />
+        ) : (
+          ''
+        )}
 
         <View style={styles.buttonWrapper}>
-          <TouchableOpacity
-            style={[styles.loginButton]}
-            onPress={onLoginPress}
-            accessibilityLabel="Log In Button">
-            <Text style={[styles.loginButtonText]}>Log In</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.signupButton}
-            onPress={onSignupPress}
-            accessibilityLabel="Sign Up Button">
-            <Text style={[styles.signupButtonText]}>Sign Up</Text>
-          </TouchableOpacity>
+          {isSignUpMode ? (
+            <View>
+              <TouchableOpacity
+                style={[styles.loginButton]}
+                onPress={onCreateAccountPress}
+                accessibilityLabel="Create Account Button">
+                <Text style={[styles.loginButtonText]}>Create Account</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.signupButton}
+                onPress={() => onSignpModeChange(false)}
+                accessibilityLabel="Cancel Button">
+                <Text style={[styles.signupButtonText]}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View>
+              <TouchableOpacity
+                style={[styles.loginButton]}
+                onPress={onLoginPress}
+                accessibilityLabel="Log In Button">
+                <Text style={[styles.loginButtonText]}>Log In</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.signupButton}
+                onPress={() => onSignpModeChange(true)}
+                accessibilityLabel="Sign Up Button">
+                <Text style={[styles.signupButtonText]}>Sign Up</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </View>
     </SafeAreaView>

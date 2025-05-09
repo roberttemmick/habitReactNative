@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import {Text, View} from 'react-native';
 import HabitComponent from './HabitComponent';
 import {HabitEntry} from '../types/types';
 
@@ -23,17 +23,21 @@ function HabitEntriesList({
 
   return (
     <View>
-      {habitEntries.map(item => {
-        return (
-          <HabitComponent
-            key={item.id}
-            id={item.habitEntryId}
-            name={item.name}
-            completed={item.completed!}
-            emitCompletedStateChangeEvent={handleCompleteStateChange}
-          />
-        );
-      })}
+      {habitEntries.length ? (
+        habitEntries.map(item => {
+          return (
+            <HabitComponent
+              key={item.id}
+              id={item.habitEntryId}
+              name={item.name}
+              completed={item.completed!}
+              emitCompletedStateChangeEvent={handleCompleteStateChange}
+            />
+          );
+        })
+      ) : (
+        <Text>Add Habits</Text>
+      )}
     </View>
   );
 }

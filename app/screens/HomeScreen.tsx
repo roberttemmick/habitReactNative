@@ -8,6 +8,7 @@ import {createDateHabits, fetchDateHabits} from '../api/dateHabits';
 import {useFocusEffect} from '@react-navigation/native';
 import {fetchHabits} from '../api/habits';
 import HabitEntriesList from '../components/HabitEntriesList';
+import {getUserId} from '../api/auth';
 
 function HomeScreen(): React.JSX.Element {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -18,30 +19,52 @@ function HomeScreen(): React.JSX.Element {
 
   const fetchData = async () => {
     try {
-      const initialFetchResponse: DateHabit[] = await fetchDateHabits(1);
-      const lastDate = moment(
-        fromDateId(
-          initialFetchResponse[initialFetchResponse.length - 1].dateId,
-        ),
-      ).startOf('day');
-      const dateDiff = lastDate.diff(today, 'day') || 0;
+      const userId = await getUserId();
 
-      if (!dateDiff) {
-        setDateHabits(initialFetchResponse);
-      } else {
-        let newDateHabits = [];
-        for (let i = dateDiff + 1; i < 1; i++) {
-          newDateHabits.push({
-            dateId: toDateId(new Date(moment().add(i, 'day').toDate())),
-          });
+      if (userId) {
+        const initialFetchResponse: DateHabit[] = await fetchDateHabits(userId);
+        // if (initialFetchResponse.length) {
+        const lastDate = initialFetchResponse.length
+          ? moment(
+              fromDateId(
+                initialFetchResponse[initialFetchResponse.length - 1].dateId,
+              ),
+            ).startOf('day')
+          : moment(new Date(moment().subtract(2, 'day').toDate()));
+
+        const dateDiff = lastDate.diff(today, 'day') || 0;
+
+        if (!dateDiff) {
+          setDateHabits(initialFetchResponse);
+        } else {
+          let newDateHabits = [];
+          for (let i = dateDiff + 1; i < 1; i++) {
+            newDateHabits.push({
+              dateId: toDateId(new Date(moment().add(i, 'day').toDate())),
+            });
+          }
+          const habits = await fetchHabits(userId);
+          const secondaryFetchResponse = await createDateHabits(
+            userId,
+            newDateHabits,
+            habits,
+          );
+          setDateHabits(initialFetchResponse.concat(secondaryFetchResponse));
         }
-        const habits = await fetchHabits(1);
-        const secondaryFetchResponse = await createDateHabits(
-          1,
-          newDateHabits,
-          habits,
-        );
-        setDateHabits(initialFetchResponse.concat(secondaryFetchResponse));
+        // } else {
+        //   const habits = await fetchHabits(userId);
+        //   const todayDateHabit = await createDateHabits(
+        //     userId,
+        //     [
+        //       {
+        //         dateId: toDateId(new Date()),
+        //       },
+        //     ],
+        //     habits,
+        //   );
+
+        //   setDateHabits(todayDateHabit || []);
+        // }
       }
     } catch (err) {
       console.log('ERROR', err);

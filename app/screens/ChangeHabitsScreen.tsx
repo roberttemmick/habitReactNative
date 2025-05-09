@@ -5,6 +5,7 @@ import ChangeHabitsList from '../components/ChangeHabitsList';
 import {Habit} from '../types/types';
 import {createHabit, fetchHabits} from '../api/habits';
 import {toDateId} from '@marceloterreiro/flash-calendar';
+import {getUserId} from '../api/auth';
 
 function ChangeHabitsScreen() {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -12,8 +13,12 @@ function ChangeHabitsScreen() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetchHabits(1);
-        setHabits(response);
+        const userId = await getUserId();
+
+        if (userId) {
+          const response = await fetchHabits(userId);
+          setHabits(response);
+        }
       } catch (err) {
         console.log('ERROR', err);
         // TODO: Handle error
@@ -23,17 +28,18 @@ function ChangeHabitsScreen() {
   }, []);
 
   const handleAddHabit = async (newHabitName: string) => {
-    console.log('NEW HABIT NAME', newHabitName);
-    const response = await createHabit(
-      1,
-      newHabitName,
-      toDateId(new Date()),
-      habits.length,
-    );
-    const updatedHabitsList = habits.concat([response]);
+    const userId = await getUserId();
 
-    console.log('updatedHabitsList', updatedHabitsList);
-    setHabits(updatedHabitsList);
+    if (userId) {
+      const response = await createHabit(
+        userId,
+        newHabitName,
+        toDateId(new Date()),
+        habits.length,
+      );
+      const updatedHabitsList = habits.concat([response]);
+      setHabits(updatedHabitsList);
+    }
   };
 
   const handleDeleteHabit = (id: number) => {

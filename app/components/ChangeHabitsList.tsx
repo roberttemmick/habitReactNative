@@ -9,31 +9,63 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import SwipeableItem from 'react-native-swipeable-item';
 import {deleteHabit, updateHabit, updateHabitsBatch} from '../api/habits';
 import {toDateId} from '@marceloterreiro/flash-calendar';
+import {getUserId} from '../api/auth';
 
 function ChangeHabitsList(props: {
   habits: Habit[];
   deleteHabitEventEmitter: Function;
 }) {
   const [habits, setHabits] = useState<Habit[]>(props.habits);
-  const previousHabitNames = useRef<{ [id: number]: string }>({});
+  const previousHabitNames = useRef<{[id: number]: string}>({});
+  const [userId, setUserId] = useState(0);
 
   useEffect(() => {
     setHabits(props.habits);
-    const nameMap: { [id: number]: string } = {};
+    const nameMap: {[id: number]: string} = {};
     props.habits.forEach(h => {
       nameMap[h.id] = h.name;
     });
     previousHabitNames.current = nameMap;
+    populateUserId();
   }, [props.habits]);
+
+  const populateUserId = async () => {
+    const id = await getUserId();
+    if (id) {
+      setUserId(id);
+    }
+  };
+
+  const updateHabitsSortOrder = useCallback(
+    async (sortedHabits: Habit[]) => {
+      const updatedHabits = sortedHabits.map((habit: Habit, index: number) => ({
+        ...habit,
+        sortOrder: index,
+      }));
+
+      setHabits(updatedHabits);
+
+      try {
+        if (userId) {
+          await updateHabitsBatch(userId, updatedHabits);
+        }
+      } catch (error) {
+        console.error('Failed to update sort order', error);
+      }
+    },
+    [userId],
+  );
 
   const handleDelete = useCallback(
     async (id: number) => {
-      await deleteHabit(1, id, toDateId(new Date()));
+      if (userId) {
+        await deleteHabit(userId, id, toDateId(new Date()));
+      }
       const prevHabits = habits.filter(habit => habit.id !== id);
       updateHabitsSortOrder(prevHabits);
       props.deleteHabitEventEmitter(id);
     },
-    [habits, props],
+    [habits, props, updateHabitsSortOrder, userId],
   );
 
   const handleLocalHabitNameChange = (id: number, newName: string) => {
@@ -44,33 +76,18 @@ function ChangeHabitsList(props: {
     );
   };
 
-  const updateHabitsSortOrder = async (sortedHabits: Habit[]) => {
-    const updatedHabits = sortedHabits.map((habit: Habit, index: number) => ({
-      ...habit,
-      sortOrder: index,
-    }));
-
-    setHabits(updatedHabits);
-
-    try {
-      await updateHabitsBatch(1, updatedHabits);
-    } catch (error) {
-      console.error('Failed to update sort order', error);
-    }
-  };
-
   const onUpdateHabitName = useCallback(
     async (id: number, updatedName: string, sortOrder: number) => {
       const prevName = previousHabitNames.current[id];
 
       if (updatedName.length === 0) {
         handleDelete(id);
-      } else if (updatedName !== prevName) {
-        await updateHabit(1, id, updatedName, sortOrder);
+      } else if (updatedName !== prevName && userId) {
+        await updateHabit(userId, id, updatedName, sortOrder);
         previousHabitNames.current[id] = updatedName;
       }
     },
-    [handleDelete],
+    [handleDelete, userId],
   );
 
   const renderItem = useCallback(

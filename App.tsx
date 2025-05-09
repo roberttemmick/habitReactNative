@@ -41,7 +41,7 @@ function App(): React.JSX.Element {
   const [authState, setAuthState] = useState(false);
 
   useEffect(() => {
-    const checkLoginStatus = async () => {
+    const getInitialAuthState = async () => {
       const token = await AsyncStorage.getItem('authToken');
       if (!token) {
         setAuthState(false);
@@ -54,20 +54,19 @@ function App(): React.JSX.Element {
           decoded && decoded.exp ? decoded.exp * 1000 < Date.now() : true;
         setAuthState(!isExpired);
       } catch (e) {
+        console.log(e);
         setAuthState(false);
       }
     };
 
-    checkLoginStatus();
+    getInitialAuthState();
   }, []);
 
   const handleAuthStateChange = (updatedAuthState: boolean) => {
-    // TODO
     setAuthState(updatedAuthState);
   };
 
   if (authState === true) {
-    // return <Navigation updateAuthStateEvent={handleAuthStateChange} />;
     return <Navigation />;
   } else {
     return <LoginScreen updateAuthStateEvent={handleAuthStateChange} />;
