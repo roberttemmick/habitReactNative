@@ -17,29 +17,8 @@ function LoginScreen() {
 
   const {signIn, signUp} = useContext(AuthContext);
 
-  const onLoginPress = async () => {
-    try {
-      signIn({email, password});
-    } catch (err: unknown) {
-      console.error(err);
-    }
-  };
-
   const onSignupModeChange = (updatedIsSignUpMode: boolean) => {
     setIsSignUpMode(updatedIsSignUpMode);
-  };
-
-  const onCreateAccountPress = async () => {
-    try {
-      if (password !== confirmPassword) {
-        // TODO: Show alert if passwords don't match
-      } else {
-        signUp({email, password});
-        // onLoginPress();
-      }
-    } catch (err: unknown) {
-      console.log(err);
-    }
   };
 
   return (
@@ -59,6 +38,7 @@ function LoginScreen() {
           value={password}
           onChangeText={(event: string) => setPassword(event)}
         />
+        {/* TODO: disable Signup button if pws dont match */}
         {isSignUpMode ? (
           <TextInput
             placeholder="Confirm Password"
@@ -76,7 +56,7 @@ function LoginScreen() {
             <View>
               <TouchableOpacity
                 style={[styles.loginButton]}
-                onPress={onCreateAccountPress}
+                onPress={() => signUp({email, password})}
                 accessibilityLabel="Create Account Button">
                 <Text style={[styles.loginButtonText]}>Create Account</Text>
               </TouchableOpacity>
@@ -91,7 +71,7 @@ function LoginScreen() {
             <View>
               <TouchableOpacity
                 style={[styles.loginButton]}
-                onPress={onLoginPress}
+                onPress={() => signIn({email, password})}
                 accessibilityLabel="Log In Button">
                 <Text style={[styles.loginButtonText]}>Log In</Text>
               </TouchableOpacity>

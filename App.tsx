@@ -36,6 +36,49 @@ function SplashScreen() {
   );
 }
 
+const RootStack = createBottomTabNavigator({
+  screenOptions: ({route}) => ({
+    tabBarIcon: () => {
+      let iconName: any = '';
+
+      if (route.name === 'Home') {
+        iconName = 'calendar-outline';
+      } else if (route.name === 'Change Habits') {
+        iconName = 'list-status';
+      } else if (route.name === 'Settings') {
+        iconName = 'cog-outline';
+      }
+
+      return <IconButton icon={iconName} size={28} />;
+    },
+    tabBarActiveTintColor: 'darkred',
+    tabBarInactiveTintColor: 'gray',
+  }),
+  screens: {
+    Home: {
+      if: useIsSignedIn,
+      screen: HomeScreen,
+    },
+    Login: {
+      if: useIsSignedOut,
+      screen: LoginScreen,
+      options: {
+        title: '',
+      },
+    },
+    'Change Habits': {
+      if: useIsSignedIn,
+      screen: ChangeHabitsScreen,
+    },
+    Settings: {
+      if: useIsSignedIn,
+      screen: SettingsScreen,
+    },
+  },
+});
+
+const Navigation = createStaticNavigation(RootStack);
+
 export default function App() {
   const [state, dispatch] = React.useReducer(
     (prevState: any, action: any) => {
@@ -123,46 +166,3 @@ export default function App() {
     </AuthContext.Provider>
   );
 }
-
-const RootStack = createBottomTabNavigator({
-  screenOptions: ({route}) => ({
-    tabBarIcon: () => {
-      let iconName: any = '';
-
-      if (route.name === 'Home') {
-        iconName = 'calendar-outline';
-      } else if (route.name === 'Change Habits') {
-        iconName = 'list-status';
-      } else if (route.name === 'Settings') {
-        iconName = 'cog-outline';
-      }
-
-      return <IconButton icon={iconName} size={28} />;
-    },
-    tabBarActiveTintColor: 'darkred',
-    tabBarInactiveTintColor: 'gray',
-  }),
-  screens: {
-    Home: {
-      if: useIsSignedIn,
-      screen: HomeScreen,
-    },
-    Login: {
-      if: useIsSignedOut,
-      screen: LoginScreen,
-      options: {
-        title: '',
-      },
-    },
-    'Change Habits': {
-      if: useIsSignedIn,
-      screen: ChangeHabitsScreen,
-    },
-    Settings: {
-      if: useIsSignedIn,
-      screen: SettingsScreen,
-    },
-  },
-});
-
-const Navigation = createStaticNavigation(RootStack);

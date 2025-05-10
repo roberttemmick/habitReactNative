@@ -39,7 +39,12 @@ export const signup = async (email: string, password: string) => {
       email,
       password,
     });
-    return response.data;
+
+    const {token, user} = response.data;
+
+    await AsyncStorage.setItem('authToken', token);
+    await AsyncStorage.setItem('userId', user.id.toString());
+    return token;
   } catch (error: unknown) {
     if (error instanceof Error) {
       throw new Error(`Failed to create user: ${error.message}`);
