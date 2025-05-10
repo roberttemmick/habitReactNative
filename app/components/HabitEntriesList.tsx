@@ -1,7 +1,8 @@
 import React from 'react';
-import {Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import HabitComponent from './HabitComponent';
 import {HabitEntry} from '../types/types';
+import {useNavigation} from '@react-navigation/native';
 
 function HabitEntriesList({
   habitEntries,
@@ -21,6 +22,12 @@ function HabitEntriesList({
     emitCompletedStateChangeEvent(habitEntries);
   };
 
+  const navigation = useNavigation();
+  const navigateToChangeHabits = () => {
+    // TODO
+    navigation.navigate('Change Habits' as never);
+  };
+
   return (
     <View>
       {habitEntries.length ? (
@@ -36,10 +43,30 @@ function HabitEntriesList({
           );
         })
       ) : (
-        <Text>Add Habits</Text>
+        <TouchableOpacity
+          style={[styles.loginButton]}
+          onPress={navigateToChangeHabits}
+          accessibilityLabel="Add Habits to Begin Button">
+          <Text style={[styles.loginButtonText]}>Add Habits to Begin</Text>
+        </TouchableOpacity>
       )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  loginButton: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loginButtonText: {
+    fontWeight: '500',
+    color: 'white',
+  },
+});
 
 export default HabitEntriesList;

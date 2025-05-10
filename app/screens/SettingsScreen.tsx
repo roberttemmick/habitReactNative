@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -7,27 +7,16 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {logout} from '../api/auth';
-import {CommonActions, useNavigation} from '@react-navigation/native';
+import {AuthContext} from '../../App';
 
 function SettingsScreen() {
-  const navigation = useNavigation();
-
-  const onLogOut = () => {
-    logout();
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{name: 'Home'}],
-      }),
-    );
-  };
+  const {signOut} = useContext(AuthContext);
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <ScrollView>
-          <TouchableOpacity style={styles.button} onPress={onLogOut}>
+          <TouchableOpacity style={styles.button} onPress={signOut}>
             <Text>Log Out</Text>
           </TouchableOpacity>
         </ScrollView>

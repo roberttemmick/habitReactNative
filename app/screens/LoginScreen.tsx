@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,24 +7,25 @@ import {
   View,
 } from 'react-native';
 import {TextInput} from 'react-native-paper';
-import {login, signup} from '../api/auth';
+import {AuthContext} from '../../App';
 
-function LoginScreen({updateAuthStateEvent}: {updateAuthStateEvent: Function}) {
+function LoginScreen() {
   const [email, setEmail] = useState('asdf');
   const [password, setPassword] = useState('1234');
   const [confirmPassword, setConfirmPassword] = useState('1234');
   const [isSignUpMode, setIsSignUpMode] = useState(false);
 
-  const onLoginPress = (): void => {
+  const {signIn, signUp} = useContext(AuthContext);
+
+  const onLoginPress = async () => {
     try {
-      const authState = login(email, password);
-      updateAuthStateEvent(authState);
+      signIn({email, password});
     } catch (err: unknown) {
-      // TODO
+      console.error(err);
     }
   };
 
-  const onSignpModeChange = (updatedIsSignUpMode: boolean) => {
+  const onSignupModeChange = (updatedIsSignUpMode: boolean) => {
     setIsSignUpMode(updatedIsSignUpMode);
   };
 
@@ -33,12 +34,11 @@ function LoginScreen({updateAuthStateEvent}: {updateAuthStateEvent: Function}) {
       if (password !== confirmPassword) {
         // TODO: Show alert if passwords don't match
       } else {
-        const authState = await signup(email, password);
-        updateAuthStateEvent(authState);
-        onLoginPress();
+        signUp({email, password});
+        // onLoginPress();
       }
     } catch (err: unknown) {
-      // TODO
+      console.log(err);
     }
   };
 
@@ -82,7 +82,7 @@ function LoginScreen({updateAuthStateEvent}: {updateAuthStateEvent: Function}) {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.signupButton}
-                onPress={() => onSignpModeChange(false)}
+                onPress={() => onSignupModeChange(false)}
                 accessibilityLabel="Cancel Button">
                 <Text style={[styles.signupButtonText]}>Cancel</Text>
               </TouchableOpacity>
@@ -97,7 +97,7 @@ function LoginScreen({updateAuthStateEvent}: {updateAuthStateEvent: Function}) {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.signupButton}
-                onPress={() => onSignpModeChange(true)}
+                onPress={() => onSignupModeChange(true)}
                 accessibilityLabel="Sign Up Button">
                 <Text style={[styles.signupButtonText]}>Sign Up</Text>
               </TouchableOpacity>

@@ -23,7 +23,6 @@ function HomeScreen(): React.JSX.Element {
 
       if (userId) {
         const initialFetchResponse: DateHabit[] = await fetchDateHabits(userId);
-        // if (initialFetchResponse.length) {
         const lastDate = initialFetchResponse.length
           ? moment(
               fromDateId(
@@ -51,20 +50,6 @@ function HomeScreen(): React.JSX.Element {
           );
           setDateHabits(initialFetchResponse.concat(secondaryFetchResponse));
         }
-        // } else {
-        //   const habits = await fetchHabits(userId);
-        //   const todayDateHabit = await createDateHabits(
-        //     userId,
-        //     [
-        //       {
-        //         dateId: toDateId(new Date()),
-        //       },
-        //     ],
-        //     habits,
-        //   );
-
-        //   setDateHabits(todayDateHabit || []);
-        // }
       }
     } catch (err) {
       console.log('ERROR', err);

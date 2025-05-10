@@ -18,7 +18,7 @@ export const login = async (email: string, password: string) => {
     const {token, user} = response.data;
     await AsyncStorage.setItem('authToken', token);
     await AsyncStorage.setItem('userId', user.id.toString());
-    return user;
+    return token;
   } catch (error: unknown) {
     if (error instanceof Error) {
       throw new Error(`Failed to log in: ${error.message}`);

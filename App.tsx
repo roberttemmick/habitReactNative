@@ -1,13 +1,128 @@
-import React, {useEffect, useState} from 'react';
-import HomeScreen from './app/screens/HomeScreen';
-import {createStaticNavigation} from '@react-navigation/native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import ChangeHabitsScreen from './app/screens/ChangeHabitsScreen';
-import SettingsScreen from './app/screens/SettingsScreen';
-import LoginScreen from './app/screens/LoginScreen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {jwtDecode} from 'jwt-decode';
+import * as React from 'react';
+import {Text, View} from 'react-native';
 import {IconButton} from 'react-native-paper';
+import {createStaticNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {login, logout, signup} from './app/api/auth';
+import HomeScreen from './app/screens/HomeScreen';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import SettingsScreen from './app/screens/SettingsScreen';
+import ChangeHabitsScreen from './app/screens/ChangeHabitsScreen';
+import LoginScreen from './app/screens/LoginScreen';
+
+export const AuthContext = React.createContext({
+  signOut: () => {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  signIn: ({email, password}: {email: string; password: string}) => {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  signUp: ({email, password}: {email: string; password: string}) => {},
+});
+const SignInContext = React.createContext(false);
+
+function useIsSignedIn(): boolean {
+  const isSignedIn = React.useContext(SignInContext);
+  return isSignedIn;
+}
+
+function useIsSignedOut() {
+  return !useIsSignedIn();
+}
+
+function SplashScreen() {
+  return (
+    <View>
+      <Text>Loading...</Text>
+    </View>
+  );
+}
+
+export default function App() {
+  const [state, dispatch] = React.useReducer(
+    (prevState: any, action: any) => {
+      switch (action.type) {
+        case 'RESTORE_TOKEN':
+          return {
+            ...prevState,
+            authToken: action.token,
+            isLoading: false,
+          };
+        case 'SIGN_IN':
+          return {
+            ...prevState,
+            isSignout: false,
+            authToken: action.token,
+          };
+        case 'SIGN_OUT':
+          return {
+            ...prevState,
+            isSignout: true,
+            authToken: null,
+          };
+        case 'SIGN_UP':
+          return {
+            ...prevState,
+            isSignout: false,
+            authToken: action.token,
+          };
+      }
+    },
+    {
+      isLoading: true,
+      isSignout: false,
+      authToken: null,
+    },
+  );
+
+  React.useEffect(() => {
+    const bootstrapAsync = async () => {
+      let authToken;
+
+      try {
+        authToken = await AsyncStorage.getItem('authToken');
+      } catch (e) {
+        console.log('Auth Token restoration failed: ', e);
+      }
+
+      // After restoring token, we may need to validate it in production apps
+
+      dispatch({type: 'RESTORE_TOKEN', token: authToken});
+    };
+
+    bootstrapAsync();
+  }, []);
+
+  const authContext = React.useMemo(
+    () => ({
+      signIn: async ({email, password}: {email: string; password: string}) => {
+        const token = await login(email, password);
+        dispatch({type: 'SIGN_IN', token});
+      },
+      signOut: async () => {
+        await logout();
+        dispatch({type: 'SIGN_OUT'});
+      },
+      signUp: async ({email, password}: {email: string; password: string}) => {
+        const token = await signup(email, password);
+        dispatch({type: 'SIGN_UP', token});
+      },
+    }),
+    [],
+  );
+
+  if (state.isLoading) {
+    return <SplashScreen />;
+  }
+
+  const isSignedIn = state.authToken != null;
+
+  return (
+    <AuthContext.Provider value={authContext}>
+      <SignInContext.Provider value={isSignedIn}>
+        <Navigation />
+      </SignInContext.Provider>
+    </AuthContext.Provider>
+  );
+}
 
 const RootStack = createBottomTabNavigator({
   screenOptions: ({route}) => ({
@@ -24,53 +139,30 @@ const RootStack = createBottomTabNavigator({
 
       return <IconButton icon={iconName} size={28} />;
     },
-    tabBarActiveTintColor: 'tomato',
+    tabBarActiveTintColor: 'darkred',
     tabBarInactiveTintColor: 'gray',
   }),
-  initialRouteName: 'Home',
   screens: {
-    Home: HomeScreen,
-    'Change Habits': ChangeHabitsScreen,
-    Settings: SettingsScreen,
+    Home: {
+      if: useIsSignedIn,
+      screen: HomeScreen,
+    },
+    Login: {
+      if: useIsSignedOut,
+      screen: LoginScreen,
+      options: {
+        title: '',
+      },
+    },
+    'Change Habits': {
+      if: useIsSignedIn,
+      screen: ChangeHabitsScreen,
+    },
+    Settings: {
+      if: useIsSignedIn,
+      screen: SettingsScreen,
+    },
   },
 });
 
 const Navigation = createStaticNavigation(RootStack);
-
-function App(): React.JSX.Element {
-  const [authState, setAuthState] = useState(false);
-
-  useEffect(() => {
-    const getInitialAuthState = async () => {
-      const token = await AsyncStorage.getItem('authToken');
-      if (!token) {
-        setAuthState(false);
-        return;
-      }
-
-      try {
-        const decoded = jwtDecode(token);
-        const isExpired =
-          decoded && decoded.exp ? decoded.exp * 1000 < Date.now() : true;
-        setAuthState(!isExpired);
-      } catch (e) {
-        console.log(e);
-        setAuthState(false);
-      }
-    };
-
-    getInitialAuthState();
-  }, []);
-
-  const handleAuthStateChange = (updatedAuthState: boolean) => {
-    setAuthState(updatedAuthState);
-  };
-
-  if (authState === true) {
-    return <Navigation />;
-  } else {
-    return <LoginScreen updateAuthStateEvent={handleAuthStateChange} />;
-  }
-}
-
-export default App;
