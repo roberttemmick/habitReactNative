@@ -52,7 +52,7 @@ function HomeScreen(): React.JSX.Element {
         }
       }
     } catch (err) {
-      console.log('ERROR', err);
+      console.log(err);
       // TODO: Handle error
     }
   };

@@ -20,7 +20,7 @@ function ChangeHabitsScreen() {
           setHabits(response);
         }
       } catch (err) {
-        console.log('ERROR', err);
+        console.log(err);
         // TODO: Handle error
       }
     };
