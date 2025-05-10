@@ -8,11 +8,12 @@ import {
 } from 'react-native';
 import {TextInput} from 'react-native-paper';
 import {AuthContext} from '../../App';
+import validator from 'validator';
 
 function LoginScreen() {
-  const [email, setEmail] = useState('asdf');
-  const [password, setPassword] = useState('1234');
-  const [confirmPassword, setConfirmPassword] = useState('1234');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isSignUpMode, setIsSignUpMode] = useState(false);
 
   const {signIn, signUp} = useContext(AuthContext);
@@ -21,12 +22,23 @@ function LoginScreen() {
     setIsSignUpMode(updatedIsSignUpMode);
   };
 
+  const isEmailValid = !!email.length && validator.isEmail(email);
+  const isPasswordValid = !!password.length;
+  const isConfirmPasswordValid =
+    !!confirmPassword.length && confirmPassword === password;
+  const isLoginFormValid = isEmailValid && isPasswordValid;
+  const isSignupFormValid = isLoginFormValid && isConfirmPasswordValid;
+
   return (
     <SafeAreaView>
       <View style={styles.contentWrapper}>
         <TextInput
           placeholder="Email"
-          style={styles.input}
+          style={
+            isEmailValid ? styles.input : [styles.input, styles.invalidInput]
+          }
+          activeUnderlineColor={isEmailValid ? 'green' : 'darkred'}
+          underlineColor={isEmailValid ? 'lightgray' : 'darkred'}
           inputMode="email"
           value={email}
           onChangeText={(event: string) => setEmail(event)}
@@ -34,16 +46,25 @@ function LoginScreen() {
         <TextInput
           placeholder="Password"
           secureTextEntry={true}
-          style={styles.input}
+          style={
+            isPasswordValid ? styles.input : [styles.input, styles.invalidInput]
+          }
+          activeUnderlineColor={isPasswordValid ? 'green' : 'darkred'}
+          underlineColor={isPasswordValid ? 'lightgray' : 'darkred'}
           value={password}
           onChangeText={(event: string) => setPassword(event)}
         />
-        {/* TODO: disable Signup button if pws dont match */}
         {isSignUpMode ? (
           <TextInput
             placeholder="Confirm Password"
             secureTextEntry={true}
-            style={styles.input}
+            style={
+              isConfirmPasswordValid
+                ? styles.input
+                : [styles.input, styles.invalidInput]
+            }
+            activeUnderlineColor={isConfirmPasswordValid ? 'green' : 'darkred'}
+            underlineColor={isConfirmPasswordValid ? 'lightgray' : 'darkred'}
             value={confirmPassword}
             onChangeText={(event: string) => setConfirmPassword(event)}
           />
@@ -55,13 +76,18 @@ function LoginScreen() {
           {isSignUpMode ? (
             <View>
               <TouchableOpacity
-                style={[styles.loginButton]}
+                style={
+                  isSignupFormValid
+                    ? [styles.loginButton]
+                    : [styles.loginButton, styles.disabledButton]
+                }
+                disabled={!isSignupFormValid}
                 onPress={() => signUp({email, password})}
                 accessibilityLabel="Create Account Button">
                 <Text style={[styles.loginButtonText]}>Create Account</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.signupButton}
+                style={[styles.signupButton]}
                 onPress={() => onSignupModeChange(false)}
                 accessibilityLabel="Cancel Button">
                 <Text style={[styles.signupButtonText]}>Cancel</Text>
@@ -70,7 +96,12 @@ function LoginScreen() {
           ) : (
             <View>
               <TouchableOpacity
-                style={[styles.loginButton]}
+                style={
+                  isLoginFormValid
+                    ? styles.loginButton
+                    : [styles.loginButton, styles.disabledButton]
+                }
+                disabled={!isLoginFormValid}
                 onPress={() => signIn({email, password})}
                 accessibilityLabel="Log In Button">
                 <Text style={[styles.loginButtonText]}>Log In</Text>
@@ -96,6 +127,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   input: {backgroundColor: 'rgba(0,0,0,0)', color: 'black', fontWeight: '300'},
+  invalidInput: {borderBottomColor: 'darkred'},
   buttonWrapper: {
     marginTop: 80,
   },
@@ -106,6 +138,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  disabledButton: {
+    backgroundColor: 'lightgray',
   },
   loginButtonText: {
     fontWeight: '500',

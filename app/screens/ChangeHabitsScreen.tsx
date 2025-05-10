@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import AddHabitComponent from '../components/AddHabitComponent';
-import {StyleSheet, View} from 'react-native';
+import {Alert, StyleSheet, View} from 'react-native';
 import ChangeHabitsList from '../components/ChangeHabitsList';
 import {Habit} from '../types/types';
 import {createHabit, fetchHabits} from '../api/habits';
@@ -21,7 +21,7 @@ function ChangeHabitsScreen() {
         }
       } catch (err) {
         console.log(err);
-        // TODO: Handle error
+        Alert.alert('Unable to retrieve habits', 'Please try again later');
       }
     };
     fetchData();
