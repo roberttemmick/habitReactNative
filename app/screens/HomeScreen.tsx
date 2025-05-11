@@ -4,7 +4,11 @@ import CalendarWrapper from '../components/calendar/CalendarWrapper';
 import moment from 'moment';
 import {fromDateId, toDateId} from '@marceloterreiro/flash-calendar';
 import {DateHabit, HabitEntry} from '../types/types';
-import {createDateHabits, fetchDateHabits} from '../api/dateHabits';
+import {
+  createDateHabits,
+  fetchDateHabits,
+  updateDateHabitCompleteState,
+} from '../api/dateHabits';
 import {useFocusEffect} from '@react-navigation/native';
 import {fetchHabits} from '../api/habits';
 import HabitEntriesList from '../components/HabitEntriesList';
@@ -16,6 +20,7 @@ function HomeScreen(): React.JSX.Element {
   const today = moment().startOf('day');
   const todayFormatted = today.format('MMM Do YYYY');
   const [dateHabits, setDateHabits] = useState<DateHabit[]>([]);
+  const [streakCount, setStreakCount] = useState(0);
 
   const fetchData = async () => {
     try {
@@ -32,7 +37,6 @@ function HomeScreen(): React.JSX.Element {
           : moment(new Date(moment().subtract(2, 'day').toDate()));
 
         const dateDiff = lastDate.diff(today, 'day') || 0;
-
         if (!dateDiff) {
           setDateHabits(initialFetchResponse);
         } else {
@@ -53,7 +57,6 @@ function HomeScreen(): React.JSX.Element {
       }
     } catch (err) {
       console.log(err);
-      // TODO: Handle error
     }
   };
 
@@ -87,7 +90,9 @@ function HomeScreen(): React.JSX.Element {
     setSelectedDate(fromDateId(dateId));
   };
 
-  const handleDateHabitCompleteStateChange = (habitEntries: HabitEntry[]) => {
+  const handleDateHabitCompleteStateChange = async (
+    habitEntries: HabitEntry[],
+  ) => {
     const allTasksCompleted = habitEntries.every(task => task.completed);
 
     const updatedDateHabit = {
@@ -103,7 +108,15 @@ function HomeScreen(): React.JSX.Element {
       ),
     );
 
-    setStreakCount(getStreakCount());
+    console.log('ISCOMPLETE', allTasksCompleted);
+    const userId = await getUserId();
+    await updateDateHabitCompleteState(
+      userId!,
+      selectedDateHabit.dateId,
+      !!allTasksCompleted,
+    );
+
+    getStreakCount();
   };
 
   useEffect(() => {
@@ -112,29 +125,28 @@ function HomeScreen(): React.JSX.Element {
 
   const getStreakCount = useCallback((): number => {
     let counter = 0;
+    let i = getSelectedDateHabit(toDateId(new Date())).completed
+      ? dateHabits.length - 1
+      : dateHabits.length - 2;
 
-    if (getSelectedDateHabit(toDateId(new Date())).completed) {
-      counter++;
+    console.log('DATEHABITS', dateHabits);
+    for (i; i > -1; i--) {
+      console.log('DATEHABIT', dateHabits[i]);
+      if (dateHabits[i].completed) {
+        counter++;
+        console.log('COUNTER', counter);
+      } else {
+        break;
+      }
     }
 
-    let i = 1;
-    while (i < dateHabits.length && dateHabits[i].completed) {
-      counter++;
-      i++;
-    }
-
+    setStreakCount(counter);
     return counter;
   }, [dateHabits, getSelectedDateHabit]);
 
   useEffect(() => {
-    const isToday = toDateId(selectedDate) === toDateId(new Date());
-
-    if (selectedDateHabit.completed && isToday) {
-      setStreakCount(getStreakCount());
-    }
+    getStreakCount();
   }, [selectedDateHabit, selectedDate, getStreakCount]);
-
-  const [streakCount, setStreakCount] = useState(getStreakCount());
 
   const calendarMinDateId = useMemo(() => {
     return dateHabits[0]?.dateId;

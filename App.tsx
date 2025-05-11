@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Text, View} from 'react-native';
+import {Alert, Text, View} from 'react-native';
 import {IconButton} from 'react-native-paper';
 import {createStaticNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -137,16 +137,31 @@ export default function App() {
   const authContext = React.useMemo(
     () => ({
       signIn: async ({email, password}: {email: string; password: string}) => {
-        const token = await login(email, password);
-        dispatch({type: 'SIGN_IN', token});
+        try {
+          const token = await login(email, password);
+          dispatch({type: 'SIGN_IN', token});
+        } catch (err: any) {
+          if (err.status === 401) {
+            Alert.alert('Email or password is incorrect');
+          }
+          console.log('Log in error: ', err.status);
+        }
       },
       signOut: async () => {
-        await logout();
-        dispatch({type: 'SIGN_OUT'});
+        try {
+          await logout();
+          dispatch({type: 'SIGN_OUT'});
+        } catch (err) {
+          console.log('Logout error: ', err);
+        }
       },
       signUp: async ({email, password}: {email: string; password: string}) => {
-        const token = await signup(email, password);
-        dispatch({type: 'SIGN_UP', token});
+        try {
+          const token = await signup(email, password);
+          dispatch({type: 'SIGN_UP', token});
+        } catch (err) {
+          console.log('Signup error: ', err);
+        }
       },
     }),
     [],

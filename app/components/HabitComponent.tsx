@@ -27,7 +27,6 @@ function HabitComponent({
       await updateHabitEntry(id, completeState);
     } catch (err) {
       console.log(err);
-      // TODO: Handle error
     }
 
     emitCompletedStateChangeEvent(id, completeState);

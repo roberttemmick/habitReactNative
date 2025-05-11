@@ -23,9 +23,10 @@ function LoginScreen() {
   };
 
   const isEmailValid = !!email.length && validator.isEmail(email);
-  const isPasswordValid = !!password.length;
+  // TODO: more secure password validation
+  const isPasswordValid = password.length > 7;
   const isConfirmPasswordValid =
-    !!confirmPassword.length && confirmPassword === password;
+    !!confirmPassword.length && isPasswordValid && confirmPassword === password;
   const isLoginFormValid = isEmailValid && isPasswordValid;
   const isSignupFormValid = isLoginFormValid && isConfirmPasswordValid;
 

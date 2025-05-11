@@ -1,3 +1,4 @@
+import {Alert} from 'react-native';
 import {Habit} from '../types/types';
 import api from './api';
 
@@ -18,8 +19,8 @@ export const createHabit = async (
     });
     return response.data;
   } catch (error: unknown) {
-    console.log(error);
     if (error instanceof Error) {
+      Alert.alert('Something went wrong, please try again');
       throw new Error(`Failed to create habit: ${error.message}`);
     }
   }
@@ -34,8 +35,8 @@ export const deleteHabit = async (
     const response = await api.put(`${route}/${userId}/${habitId}/${dateId}`);
     return response.data;
   } catch (error: unknown) {
-    console.log(error);
     if (error instanceof Error) {
+      Alert.alert('Something went wrong, please try again');
       throw new Error(`Failed to delete habit: ${error.message}`);
     }
   }
@@ -48,6 +49,7 @@ export const fetchHabits = async (userId: number) => {
   } catch (error: unknown) {
     console.log(error);
     if (error instanceof Error) {
+      Alert.alert('Something went wrong, please try again');
       throw new Error(`Failed to fetch habits: ${error.message}`);
     }
   }
@@ -68,8 +70,8 @@ export const updateHabit = async (
     });
     return response.data;
   } catch (error: unknown) {
-    console.log(error);
     if (error instanceof Error) {
+      Alert.alert('Something went wrong, please try again');
       throw new Error(`Failed to update habit: ${error.message}`);
     }
   }
@@ -84,8 +86,8 @@ export const updateHabitsBatch = async (userId: number, habits: Habit[]) => {
 
     return response.data;
   } catch (error: unknown) {
-    console.log(error);
     if (error instanceof Error) {
+      Alert.alert('Something went wrong, please try again');
       throw new Error(`Failed to update habits: ${error.message}`);
     }
   }

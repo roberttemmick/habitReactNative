@@ -24,7 +24,6 @@ function HabitEntriesList({
 
   const navigation = useNavigation();
   const navigateToChangeHabits = () => {
-    // TODO
     navigation.navigate('Change Habits' as never);
   };
 

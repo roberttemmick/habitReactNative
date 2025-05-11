@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import {Alert} from 'react-native';
 
 const API_URL = 'http://localhost:3000/api/auth'; // Base API URL
 
@@ -21,6 +22,7 @@ export const login = async (email: string, password: string) => {
     return token;
   } catch (error: unknown) {
     if (error instanceof Error) {
+      Alert.alert('Email or password is incorrect');
       throw new Error(`Failed to log in: ${error.message}`);
     }
   }
@@ -45,6 +47,7 @@ export const signup = async (email: string, password: string) => {
     return token;
   } catch (error: unknown) {
     if (error instanceof Error) {
+      Alert.alert('Email is already in use.');
       throw new Error(`Failed to create user: ${error.message}`);
     }
   }
