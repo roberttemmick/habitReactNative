@@ -16,8 +16,17 @@ function SettingsScreen() {
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <ScrollView>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Account</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Application</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Notifications</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={signOut}>
-            <Text>Log Out</Text>
+            <Text style={styles.buttonText}>Log Out</Text>
           </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
@@ -33,7 +42,13 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
-    padding: 10,
+    padding: 24,
+    borderBottomColor: 'lightgray',
+    borderBottomWidth: 1,
+  },
+  buttonText: {
+    fontSize: 20,
+    fontWeight: 200,
   },
   countContainer: {
     alignItems: 'center',

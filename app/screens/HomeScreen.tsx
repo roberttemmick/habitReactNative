@@ -108,29 +108,28 @@ function HomeScreen(): React.JSX.Element {
       ),
     );
 
-    console.log('ISCOMPLETE', allTasksCompleted);
     const userId = await getUserId();
     await updateDateHabitCompleteState(
       userId!,
       selectedDateHabit.dateId,
       !!allTasksCompleted,
     );
-
-    getStreakCount();
   };
 
   useEffect(() => {
     setSelectedDateHabit(getSelectedDateHabit(toDateId(selectedDate)));
   }, [selectedDate, getSelectedDateHabit]);
 
-  const getStreakCount = useCallback((): number => {
+  const getStreakCount = useCallback(() => {
     let counter = 0;
     let i = 0;
-    if (getSelectedDateHabit(toDateId(new Date())).completed) {
+    if (
+      dateHabits[dateHabits.length - 1]?.completed ||
+      !dateHabits[dateHabits.length - 2]?.completed
+    ) {
       i = dateHabits.length - 1;
     } else {
       i = dateHabits.length - 2;
-      counter++;
     }
 
     for (i; i > -1; i--) {
@@ -142,8 +141,7 @@ function HomeScreen(): React.JSX.Element {
     }
 
     setStreakCount(counter);
-    return counter;
-  }, [dateHabits, getSelectedDateHabit]);
+  }, [dateHabits]);
 
   useEffect(() => {
     getStreakCount();

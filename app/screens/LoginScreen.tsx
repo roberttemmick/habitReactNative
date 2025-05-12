@@ -42,7 +42,7 @@ function LoginScreen() {
           underlineColor={isEmailValid ? 'lightgray' : 'darkred'}
           inputMode="email"
           value={email}
-          onChangeText={(event: string) => setEmail(event)}
+          onChangeText={(event: string) => setEmail(event.toLowerCase())}
         />
         <TextInput
           placeholder="Password"
