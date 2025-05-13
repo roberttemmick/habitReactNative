@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Alert, Text, View} from 'react-native';
 import {IconButton} from 'react-native-paper';
-import {createStaticNavigation} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {login, logout, signup} from './app/api/auth';
 import HomeScreen from './app/screens/HomeScreen';
@@ -9,6 +9,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import SettingsScreen from './app/screens/SettingsScreen';
 import ChangeHabitsScreen from './app/screens/ChangeHabitsScreen';
 import LoginScreen from './app/screens/LoginScreen';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 export const AuthContext = React.createContext({
   signOut: () => {},
@@ -70,14 +71,90 @@ const RootStack = createBottomTabNavigator({
       if: useIsSignedIn,
       screen: ChangeHabitsScreen,
     },
-    Settings: {
-      if: useIsSignedIn,
-      screen: SettingsScreen,
-    },
   },
 });
 
-const Navigation = createStaticNavigation(RootStack);
+const Stack = createNativeStackNavigator();
+
+function SettingsStackNavigator() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen
+        name="Account Settings"
+        component={() => <Text>Account Settings</Text>}
+      />
+      <Stack.Screen
+        name="Application Settings"
+        component={() => <Text>Application Settings</Text>}
+      />
+      <Stack.Screen
+        name="Notification Settings"
+        component={() => <Text>Notification Settings</Text>}
+      />
+    </Stack.Navigator>
+  );
+}
+
+<RootStack.Screen
+  name="Settings"
+  component={SettingsStackNavigator}
+  options={{
+    tabBarIcon: () => <IconButton icon="cog-outline" size={28} />,
+  }}
+/>;
+
+function RootTabs() {
+  const isSignedIn = useIsSignedIn();
+
+  return (
+    <RootStack.Navigator
+      screenOptions={{
+        tabBarActiveTintColor: 'darkred',
+        tabBarInactiveTintColor: 'gray',
+      }}>
+      {isSignedIn && (
+        <>
+          <RootStack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{
+              tabBarIcon: () => (
+                <IconButton icon="calendar-outline" size={28} />
+              ),
+            }}
+          />
+          <RootStack.Screen
+            name="Change Habits"
+            component={ChangeHabitsScreen}
+            options={{
+              tabBarIcon: () => {
+                return <IconButton icon="list-status" size={28} />;
+              },
+            }}
+          />
+          <RootStack.Screen
+            name="Settings Menu"
+            component={SettingsStackNavigator}
+            options={{
+              headerShown: false,
+              tabBarIcon: () => {
+                return <IconButton icon="cog-outline" size={28} />;
+              },
+            }}
+          />
+        </>
+      )}
+      {!isSignedIn && (
+        <RootStack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{title: ''}}
+        />
+      )}
+    </RootStack.Navigator>
+  );
+}
 
 export default function App() {
   const [state, dispatch] = React.useReducer(
@@ -176,7 +253,9 @@ export default function App() {
   return (
     <AuthContext.Provider value={authContext}>
       <SignInContext.Provider value={isSignedIn}>
-        <Navigation />
+        <NavigationContainer>
+          <RootTabs />
+        </NavigationContainer>
       </SignInContext.Provider>
     </AuthContext.Provider>
   );

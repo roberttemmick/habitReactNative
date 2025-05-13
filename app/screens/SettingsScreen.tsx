@@ -24,17 +24,17 @@ function SettingsScreen() {
         <ScrollView>
           <TouchableOpacity
             style={styles.button}
-            onLongPress={() => navigate('Account Settings')}>
+            onPress={() => navigate('Account Settings')}>
             <Text style={styles.buttonText}>Account</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
-            onLongPress={() => navigate('Application Settings')}>
+            onPress={() => navigate('Application Settings')}>
             <Text style={styles.buttonText}>Application</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
-            onLongPress={() => navigate('Notification Settings')}>
+            onPress={() => navigate('Notification Settings')}>
             <Text style={styles.buttonText}>Notifications</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={signOut}>
