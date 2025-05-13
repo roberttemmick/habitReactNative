@@ -78,8 +78,17 @@ const Stack = createNativeStackNavigator();
 
 function SettingsStackNavigator() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Settings" component={SettingsScreen} />
+    <Stack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontWeight: 300,
+        },
+      }}>
+      <Stack.Screen
+        name="Settings Menu"
+        component={SettingsScreen}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="Account Settings"
         component={() => <Text>Account Settings</Text>}
@@ -96,14 +105,6 @@ function SettingsStackNavigator() {
   );
 }
 
-<RootStack.Screen
-  name="Settings"
-  component={SettingsStackNavigator}
-  options={{
-    tabBarIcon: () => <IconButton icon="cog-outline" size={28} />,
-  }}
-/>;
-
 function RootTabs() {
   const isSignedIn = useIsSignedIn();
 
@@ -112,6 +113,9 @@ function RootTabs() {
       screenOptions={{
         tabBarActiveTintColor: 'darkred',
         tabBarInactiveTintColor: 'gray',
+        headerTitleStyle: {
+          display: 'none',
+        },
       }}>
       {isSignedIn && (
         <>
@@ -134,7 +138,7 @@ function RootTabs() {
             }}
           />
           <RootStack.Screen
-            name="Settings Menu"
+            name="Settings"
             component={SettingsStackNavigator}
             options={{
               headerShown: false,
