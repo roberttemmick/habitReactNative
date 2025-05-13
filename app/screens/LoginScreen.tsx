@@ -14,12 +14,20 @@ function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [isSignUpMode, setIsSignUpMode] = useState(false);
+  const [isSignupMode, setIsSignUpMode] = useState(false);
 
   const {signIn, signUp} = useContext(AuthContext);
 
-  const onSignupModeChange = (updatedIsSignUpMode: boolean) => {
-    setIsSignUpMode(updatedIsSignUpMode);
+  const onSignupModeChange = (updatedIsSignupMode: boolean) => {
+    setIsSignUpMode(updatedIsSignupMode);
+  };
+
+  const onSubmitEditing = () => {
+    if (isSignupMode && isSignupFormValid) {
+      signUp({email, password});
+    } else if (!isSignupMode && isLoginFormValid) {
+      signIn({email, password});
+    }
   };
 
   const isEmailValid = !!email.length && validator.isEmail(email);
@@ -43,6 +51,7 @@ function LoginScreen() {
           inputMode="email"
           value={email}
           onChangeText={(event: string) => setEmail(event.toLowerCase())}
+          onSubmitEditing={() => onSubmitEditing()}
         />
         <TextInput
           placeholder="Password"
@@ -54,8 +63,9 @@ function LoginScreen() {
           underlineColor={isPasswordValid ? 'lightgray' : 'darkred'}
           value={password}
           onChangeText={(event: string) => setPassword(event)}
+          onSubmitEditing={() => onSubmitEditing()}
         />
-        {isSignUpMode ? (
+        {isSignupMode ? (
           <TextInput
             placeholder="Confirm Password"
             secureTextEntry={true}
@@ -68,13 +78,14 @@ function LoginScreen() {
             underlineColor={isConfirmPasswordValid ? 'lightgray' : 'darkred'}
             value={confirmPassword}
             onChangeText={(event: string) => setConfirmPassword(event)}
+            onSubmitEditing={() => onSubmitEditing()}
           />
         ) : (
           ''
         )}
 
         <View style={styles.buttonWrapper}>
-          {isSignUpMode ? (
+          {isSignupMode ? (
             <View>
               <TouchableOpacity
                 style={

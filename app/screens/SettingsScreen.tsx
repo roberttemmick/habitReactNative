@@ -8,21 +8,33 @@ import {
 } from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {AuthContext} from '../../App';
+import {useNavigation} from '@react-navigation/native';
 
 function SettingsScreen() {
   const {signOut} = useContext(AuthContext);
+  const navigation = useNavigation();
+
+  const navigate = (navScreen: string) => {
+    navigation.navigate(navScreen as never);
+  };
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <ScrollView>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onLongPress={() => navigate('Account Settings')}>
             <Text style={styles.buttonText}>Account</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onLongPress={() => navigate('Application Settings')}>
             <Text style={styles.buttonText}>Application</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onLongPress={() => navigate('Notification Settings')}>
             <Text style={styles.buttonText}>Notifications</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={signOut}>
