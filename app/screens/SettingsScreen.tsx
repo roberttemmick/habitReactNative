@@ -8,35 +8,32 @@ import {
 } from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {AuthContext} from '../../App';
-import {useNavigation} from '@react-navigation/native';
+import AccountSettingsComponent from '../components/settings/AccountSettingsComponent';
+import AppSettingsComponent from '../components/settings/AppSettingsComponent';
+import NotificationSettingsComponent from '../components/settings/NotificationSettingsComponent';
 
 function SettingsScreen() {
   const {signOut} = useContext(AuthContext);
-  const navigation = useNavigation();
-
-  const navigate = (navScreen: string) => {
-    navigation.navigate(navScreen as never);
+  const accountSettings = {
+    email: 'Robert@gmail.com',
+  };
+  const appSettings = {
+    weekStartsOn: 'Monday',
+  };
+  const notificationSettings = {
+    isEnabled: true,
+    reminderTime: '21:00',
   };
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
-        <ScrollView>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigate('Account Settings')}>
-            <Text style={styles.buttonText}>Account</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigate('Application Settings')}>
-            <Text style={styles.buttonText}>Application</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigate('Notification Settings')}>
-            <Text style={styles.buttonText}>Notifications</Text>
-          </TouchableOpacity>
+      <SafeAreaView>
+        <ScrollView style={styles.container}>
+          <AccountSettingsComponent accountSettings={accountSettings} />
+          <AppSettingsComponent appSettings={appSettings} />
+          <NotificationSettingsComponent
+            notificationSettings={notificationSettings}
+          />
           <TouchableOpacity style={styles.button} onPress={signOut}>
             <Text style={styles.buttonText}>Log Out</Text>
           </TouchableOpacity>
@@ -48,23 +45,16 @@ function SettingsScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 10,
+    padding: '5%',
+    height: '100%',
   },
   button: {
     alignItems: 'center',
     padding: 24,
-    borderBottomColor: 'lightgray',
-    borderBottomWidth: 1,
   },
   buttonText: {
     fontSize: 20,
     fontWeight: 200,
-  },
-  countContainer: {
-    alignItems: 'center',
-    padding: 10,
   },
 });
 

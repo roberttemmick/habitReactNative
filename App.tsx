@@ -9,7 +9,6 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import SettingsScreen from './app/screens/SettingsScreen';
 import ChangeHabitsScreen from './app/screens/ChangeHabitsScreen';
 import LoginScreen from './app/screens/LoginScreen';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 export const AuthContext = React.createContext({
   signOut: () => {},
@@ -74,37 +73,6 @@ const RootStack = createBottomTabNavigator({
   },
 });
 
-const Stack = createNativeStackNavigator();
-
-function SettingsStackNavigator() {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerTitleStyle: {
-          fontWeight: 300,
-        },
-      }}>
-      <Stack.Screen
-        name="Settings Menu"
-        component={SettingsScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="Account Settings"
-        component={() => <Text>Account Settings</Text>}
-      />
-      <Stack.Screen
-        name="Application Settings"
-        component={() => <Text>Application Settings</Text>}
-      />
-      <Stack.Screen
-        name="Notification Settings"
-        component={() => <Text>Notification Settings</Text>}
-      />
-    </Stack.Navigator>
-  );
-}
-
 function RootTabs() {
   const isSignedIn = useIsSignedIn();
 
@@ -139,7 +107,7 @@ function RootTabs() {
           />
           <RootStack.Screen
             name="Settings"
-            component={SettingsStackNavigator}
+            component={SettingsScreen}
             options={{
               headerShown: false,
               tabBarIcon: () => {
