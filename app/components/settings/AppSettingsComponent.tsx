@@ -2,6 +2,7 @@ import {Picker} from '@react-native-picker/picker';
 import {useState} from 'react';
 import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Provider} from 'react-native-paper';
+import {updateAppSettings} from '../../api/settings';
 
 const days = [
   {
@@ -35,23 +36,23 @@ const days = [
 ];
 
 interface AppSettings {
-  appSettings: {
-    weekStartsOn: string;
-  };
+  weekStartsOn: string;
+  userId: number;
 }
 
-function AppSettingsComponent({appSettings: appSettings}: AppSettings) {
-  const [weekStarts, setWeekStarts] = useState(appSettings.weekStartsOn);
+function AppSettingsComponent({weekStartsOn, userId}: AppSettings) {
+  const [newWeekStarts, setNewWeekStarts] = useState(weekStartsOn);
   const [isPickerVisible, setIsPickerVisible] = useState(false);
 
-  const onWeekStartsSave = () => {
+  const onWeekStartsSave = async () => {
     // TODO: Save state to DB
+    await updateAppSettings(userId, newWeekStarts);
     setIsPickerVisible(false);
   };
 
   const onCancel = () => {
     setIsPickerVisible(false);
-    setWeekStarts(appSettings.weekStartsOn);
+    setNewWeekStarts(weekStartsOn);
   };
 
   return (
@@ -67,15 +68,15 @@ function AppSettingsComponent({appSettings: appSettings}: AppSettings) {
                 <TouchableOpacity
                   style={styles.iconButton}
                   onPress={() => setIsPickerVisible(true)}>
-                  <Text style={styles.buttonText}>{`${weekStarts} >`}</Text>
+                  <Text style={styles.buttonText}>{`${newWeekStarts} >`}</Text>
                 </TouchableOpacity>
               </View>
             )}
             {isPickerVisible && (
               <View>
                 <Picker
-                  selectedValue={weekStarts}
-                  onValueChange={value => setWeekStarts(value)}>
+                  selectedValue={newWeekStarts}
+                  onValueChange={value => setNewWeekStarts(value)}>
                   {days.map((day, index) => {
                     return (
                       <Picker.Item
@@ -111,6 +112,7 @@ const styles = StyleSheet.create({
   },
   buttonLabel: {
     fontWeight: 200,
+    marginBottom: 4,
   },
   buttonWrapper: {
     alignItems: 'flex-start',

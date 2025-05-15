@@ -1,37 +1,51 @@
 import {useState} from 'react';
 import {StyleSheet, Switch, Text, TouchableOpacity, View} from 'react-native';
+import {DefaultTheme, Provider} from 'react-native-paper';
 import {TimePickerModal} from 'react-native-paper-dates';
+import {updateNotificationSettings} from '../../api/settings';
 
 interface NotificationSettings {
-  notificationSettings: {
-    isEnabled: boolean;
-    reminderTime: string;
-  };
+  enableNotifications: boolean;
+  reminderTime: string;
+  userId: number;
 }
 
 function NotificationSettingsComponent({
-  notificationSettings,
+  enableNotifications,
+  reminderTime,
+  userId,
 }: NotificationSettings) {
-  const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(
-    notificationSettings.isEnabled,
-  );
+  const [newEnableNotifications, setNewEnableNotifications] =
+    useState(enableNotifications);
   const [isChangeTimeButtonVisible, setIsChangeTimeButtonVisible] =
     useState(false);
-  const [reminderTime, setReminderTime] = useState(
-    notificationSettings.reminderTime,
-  );
+  const [newReminderTime, setNewReminderTime] = useState(reminderTime);
 
-  const onIsNotificationsEnabledSwitchToggle = (
+  const onIsNotificationsEnabledSwitchToggle = async (
     updatedEnabledState: boolean,
   ) => {
-    setIsNotificationsEnabled(updatedEnabledState);
-    // TODO: Call API
+    setNewEnableNotifications(updatedEnabledState);
+    await updateNotificationSettings(
+      userId,
+      updatedEnabledState,
+      newReminderTime,
+    );
   };
 
-  const onReminderTimeChange = (hour: number, minutes: number) => {
+  const onReminderTimeChange = async (hour: number, minutes: number) => {
     const formattedTime = `${hour}:${minutes}`;
-    setReminderTime(formattedTime);
-    // TODO: Call API
+    setNewReminderTime(formattedTime);
+    setIsChangeTimeButtonVisible(false);
+    await updateNotificationSettings(
+      userId,
+      newEnableNotifications,
+      formattedTime,
+    );
+  };
+
+  const onModalDismiss = () => {
+    setNewReminderTime(reminderTime);
+    setIsChangeTimeButtonVisible(false);
   };
 
   return (
@@ -43,27 +57,30 @@ function NotificationSettingsComponent({
           <Switch
             trackColor={{false: 'darkRed', true: 'green'}}
             onValueChange={onIsNotificationsEnabledSwitchToggle}
-            value={isNotificationsEnabled}
+            value={newEnableNotifications}
           />
 
           <TouchableOpacity
             style={styles.iconButton}
-            disabled={!isNotificationsEnabled}
+            disabled={!newEnableNotifications}
             onPress={() => setIsChangeTimeButtonVisible(true)}>
-            <Text style={styles.buttonText}>{`${reminderTime} >`}</Text>
+            <Text style={styles.buttonText}>{`${newReminderTime} >`}</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      <TimePickerModal
-        visible={isChangeTimeButtonVisible}
-        onDismiss={() => {
-          setIsChangeTimeButtonVisible(false);
-        }}
-        onConfirm={(hoursAndMinutes: {hours: number; minutes: number}) => {
-          onReminderTimeChange(hoursAndMinutes.hours, hoursAndMinutes.minutes);
-        }}
-      />
+      <Provider theme={theme}>
+        <TimePickerModal
+          visible={isChangeTimeButtonVisible}
+          onDismiss={() => onModalDismiss()}
+          onConfirm={(hoursAndMinutes: {hours: number; minutes: number}) => {
+            onReminderTimeChange(
+              hoursAndMinutes.hours,
+              hoursAndMinutes.minutes,
+            );
+          }}
+        />
+      </Provider>
     </View>
   );
 }
@@ -79,6 +96,7 @@ const styles = StyleSheet.create({
   },
   buttonLabel: {
     fontWeight: 200,
+    marginBottom: 4,
   },
   notificationTimeContainer: {
     display: 'flex',
@@ -97,5 +115,19 @@ const styles = StyleSheet.create({
     fontWeight: 200,
   },
 });
+
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#007AFF',
+    primaryContainer: '#007AFF',
+    onPrimary: 'white',
+    onPrimaryContainer: '#007AFF',
+    onSurface: 'rgba(0,0,0,0.3)',
+    onSurfaceVariant: 'rgba(0,0,0,0.3)',
+    outline: 'rgba(0,0,0,0.3)',
+  },
+};
 
 export default NotificationSettingsComponent;

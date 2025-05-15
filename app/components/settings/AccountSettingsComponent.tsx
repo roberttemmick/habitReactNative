@@ -1,21 +1,19 @@
 import {useContext, useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {IconButton, TextInput} from 'react-native-paper';
 import {AuthContext} from '../../../App';
+import {updateEmail, updatePassword} from '../../api/settings';
 
 interface AccountSettings {
-  accountSettings: {
-    email: string;
-  };
+  email: string;
+  userId: number;
 }
 
-function AccountSettingsComponent({
-  accountSettings: accountSettings,
-}: AccountSettings) {
+function AccountSettingsComponent({email, userId}: AccountSettings) {
   const {signOut} = useContext(AuthContext);
 
   const [isChangeEmailVisible, setIsChangeEmailVisible] = useState(false);
-  const [email, setEmail] = useState(accountSettings.email);
+  const [newEmail, setNewEmail] = useState(email);
   const [isChangePasswordVisible, setIsChangePasswordVisible] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -26,17 +24,19 @@ function AccountSettingsComponent({
 
   const onEmailSave = () => {
     setIsChangeEmailVisible(false);
-    // TODO: Save email to DB
+    updateEmail(userId, newEmail);
   };
+
   const onEmailCancel = () => {
-    setEmail(accountSettings.email);
+    setNewEmail(email);
     setIsChangeEmailVisible(false);
   };
 
   const onPasswordSave = () => {
     setIsChangePasswordVisible(false);
-    // TODO: Save Password to DB
+    updatePassword(userId, password);
   };
+
   const onPasswordCancel = () => {
     setIsChangePasswordVisible(false);
     setPassword('');
@@ -45,6 +45,8 @@ function AccountSettingsComponent({
 
   return (
     <View>
+      <Text>{newEmail}</Text>
+
       <Text style={styles.sectionHeader}>Account</Text>
       <View style={styles.sectionContent}>
         <View>
@@ -61,21 +63,23 @@ function AccountSettingsComponent({
             <View>
               <Text style={styles.buttonLabel}>Email</Text>
               <TextInput
-                value={email}
-                onChangeText={(event: string) => setEmail(event.toLowerCase())}
+                value={newEmail}
+                onChangeText={(event: string) =>
+                  setNewEmail(event.toLowerCase())
+                }
+                style={
+                  isPasswordValid
+                    ? styles.input
+                    : [styles.input, styles.invalidInput]
+                }
               />
 
-              <TouchableOpacity
-                style={styles.iconButton}
-                disabled={!email.length || email === accountSettings.email}
-                onPress={onEmailSave}>
-                <Text style={styles.buttonText}>{'Save Email'}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.iconButton}
-                onPress={onEmailCancel}>
-                <Text style={styles.buttonText}>{'Cancel'}</Text>
-              </TouchableOpacity>
+              <Button
+                title="Save email"
+                disabled={!newEmail.length || newEmail === email}
+                onPress={() => onEmailSave()}
+              />
+              <Button title="Cancel" onPress={() => onEmailCancel()} />
             </View>
           )}
         </View>
@@ -128,17 +132,12 @@ function AccountSettingsComponent({
               />
             </View>
 
-            <TouchableOpacity
-              style={styles.iconButton}
+            <Button
+              title="Save Password"
               disabled={!isPasswordValid || !isConfirmPasswordValid}
-              onPress={onPasswordSave}>
-              <Text style={styles.buttonText}>{'Save Password'}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.iconButton}
-              onPress={onPasswordCancel}>
-              <Text style={styles.buttonText}>{'Cancel'}</Text>
-            </TouchableOpacity>
+              onPress={() => onPasswordSave()}
+            />
+            <Button title="Cancel" onPress={() => onPasswordCancel()} />
           </View>
         )}
         <TouchableOpacity style={styles.iconButton} onPress={signOut}>
@@ -161,6 +160,7 @@ const styles = StyleSheet.create({
     fontWeight: 200,
     paddingTop: '5%',
   },
+  input: {backgroundColor: 'rgba(0,0,0,0)', color: 'black', fontWeight: '300'},
   buttonLabel: {
     fontWeight: 200,
   },
@@ -177,7 +177,6 @@ const styles = StyleSheet.create({
     fontWeight: 200,
   },
   icon: {margin: 0, height: 18},
-  input: {backgroundColor: 'rgba(0,0,0,0)', color: 'black', fontWeight: '300'},
   invalidInput: {borderBottomColor: 'darkred'},
 });
 

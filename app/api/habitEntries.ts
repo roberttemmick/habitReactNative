@@ -1,4 +1,4 @@
-import { Alert } from "react-native";
+import {Alert} from 'react-native';
 import api from './api';
 
 const route = '/habit-entries';
@@ -15,7 +15,7 @@ export const updateHabitEntry = async (
     return response.data;
   } catch (error: unknown) {
     if (error instanceof Error) {
-            Alert.alert('Something went wrong, please try again');
+      Alert.alert('Something went wrong, please try again');
       throw new Error(`Failed to update habitEntry: ${error.message}`);
     }
   }
