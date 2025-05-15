@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Button, StyleSheet, Switch, Text, View} from 'react-native';
+import {StyleSheet, Switch, Text, TouchableOpacity, View} from 'react-native';
 import {TimePickerModal} from 'react-native-paper-dates';
 
 interface NotificationSettings {
@@ -45,11 +45,13 @@ function NotificationSettingsComponent({
             onValueChange={onIsNotificationsEnabledSwitchToggle}
             value={isNotificationsEnabled}
           />
-          <Button
-            title={reminderTime}
+
+          <TouchableOpacity
+            style={styles.iconButton}
             disabled={!isNotificationsEnabled}
-            onPress={() => setIsChangeTimeButtonVisible(true)}
-          />
+            onPress={() => setIsChangeTimeButtonVisible(true)}>
+            <Text style={styles.buttonText}>{`${reminderTime} >`}</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -69,8 +71,6 @@ function NotificationSettingsComponent({
 const styles = StyleSheet.create({
   sectionContent: {
     padding: '5%',
-    borderBottomColor: 'lightgray',
-    borderBottomWidth: 1,
   },
   sectionHeader: {
     fontSize: 30,
@@ -85,6 +85,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 24,
+  },
+  iconButton: {
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 200,
   },
 });
 

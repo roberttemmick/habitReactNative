@@ -1,6 +1,6 @@
 import {Picker} from '@react-native-picker/picker';
 import {useState} from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
+import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Provider} from 'react-native-paper';
 
 const days = [
@@ -64,10 +64,11 @@ function AppSettingsComponent({appSettings: appSettings}: AppSettings) {
 
             {!isPickerVisible && (
               <View style={styles.buttonWrapper}>
-                <Button
-                  title={weekStarts}
-                  onPress={() => setIsPickerVisible(true)}
-                />
+                <TouchableOpacity
+                  style={styles.iconButton}
+                  onPress={() => setIsPickerVisible(true)}>
+                  <Text style={styles.buttonText}>{`${weekStarts} >`}</Text>
+                </TouchableOpacity>
               </View>
             )}
             {isPickerVisible && (
@@ -114,6 +115,16 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     alignItems: 'flex-start',
     marginLeft: -8,
+  },
+  iconButton: {
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 200,
   },
 });
 

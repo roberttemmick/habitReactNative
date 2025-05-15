@@ -1,6 +1,7 @@
-import {useState} from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
-import {TextInput} from 'react-native-paper';
+import {useContext, useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {IconButton, TextInput} from 'react-native-paper';
+import {AuthContext} from '../../../App';
 
 interface AccountSettings {
   accountSettings: {
@@ -11,6 +12,8 @@ interface AccountSettings {
 function AccountSettingsComponent({
   accountSettings: accountSettings,
 }: AccountSettings) {
+  const {signOut} = useContext(AuthContext);
+
   const [isChangeEmailVisible, setIsChangeEmailVisible] = useState(false);
   const [email, setEmail] = useState(accountSettings.email);
   const [isChangePasswordVisible, setIsChangePasswordVisible] = useState(false);
@@ -47,10 +50,11 @@ function AccountSettingsComponent({
         <View>
           {!isChangeEmailVisible && (
             <View style={styles.buttonWrapper}>
-              <Button
-                title="Change Email >"
-                onPress={() => setIsChangeEmailVisible(true)}
-              />
+              <TouchableOpacity
+                style={styles.iconButton}
+                onPress={() => setIsChangeEmailVisible(true)}>
+                <Text style={styles.buttonText}>{'Change Email >'}</Text>
+              </TouchableOpacity>
             </View>
           )}
           {isChangeEmailVisible && (
@@ -60,22 +64,29 @@ function AccountSettingsComponent({
                 value={email}
                 onChangeText={(event: string) => setEmail(event.toLowerCase())}
               />
-              <Button
-                title="Save email"
+
+              <TouchableOpacity
+                style={styles.iconButton}
                 disabled={!email.length || email === accountSettings.email}
-                onPress={() => onEmailSave()}
-              />
-              <Button title="Cancel" onPress={() => onEmailCancel()} />
+                onPress={onEmailSave}>
+                <Text style={styles.buttonText}>{'Save Email'}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.iconButton}
+                onPress={onEmailCancel}>
+                <Text style={styles.buttonText}>{'Cancel'}</Text>
+              </TouchableOpacity>
             </View>
           )}
         </View>
 
         {!isChangePasswordVisible && (
           <View style={styles.buttonWrapper}>
-            <Button
-              title="Change Password >"
-              onPress={() => setIsChangePasswordVisible(true)}
-            />
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={() => setIsChangePasswordVisible(true)}>
+              <Text style={styles.buttonText}>{'Change Password >'}</Text>
+            </TouchableOpacity>
           </View>
         )}
         {isChangePasswordVisible && (
@@ -117,14 +128,23 @@ function AccountSettingsComponent({
               />
             </View>
 
-            <Button
-              title="Save Password"
+            <TouchableOpacity
+              style={styles.iconButton}
               disabled={!isPasswordValid || !isConfirmPasswordValid}
-              onPress={() => onPasswordSave()}
-            />
-            <Button title="Cancel" onPress={() => onPasswordCancel()} />
+              onPress={onPasswordSave}>
+              <Text style={styles.buttonText}>{'Save Password'}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={onPasswordCancel}>
+              <Text style={styles.buttonText}>{'Cancel'}</Text>
+            </TouchableOpacity>
           </View>
         )}
+        <TouchableOpacity style={styles.iconButton} onPress={signOut}>
+          <Text style={styles.buttonText}>Log Out</Text>
+          <IconButton icon="logout" size={18} style={styles.icon} />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -147,6 +167,16 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     alignItems: 'flex-start',
   },
+  iconButton: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginBottom: 12,
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 200,
+  },
+  icon: {margin: 0, height: 18},
   input: {backgroundColor: 'rgba(0,0,0,0)', color: 'black', fontWeight: '300'},
   invalidInput: {borderBottomColor: 'darkred'},
 });
