@@ -38,7 +38,9 @@ function NotificationSettingsComponent({
   };
 
   const onReminderTimeChange = async (hour: number, minutes: number) => {
-    const formattedTime = `${hour}:${minutes}`;
+    const hourString = hour < 10 ? `0${hour}` : hour;
+    const minuteString = minutes < 10 ? `0${minutes}` : minutes;
+    const formattedTime = `${hourString}:${minuteString}`;
     setNewReminderTime(formattedTime);
     setIsChangeTimeButtonVisible(false);
     await updateNotificationSettings(

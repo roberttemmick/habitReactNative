@@ -59,7 +59,7 @@ export const updateEmail = async (userId: number, email: string) => {
     return response.data;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      Alert.alert('Something went wrong, please try again');
+      Alert.alert('Unable to update email, please try again');
       throw new Error(`Failed to update email: ${error.message}`);
     }
   }
@@ -73,7 +73,7 @@ export const updatePassword = async (userId: number, password: string) => {
     return response.data;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      Alert.alert('Something went wrong, please try again');
+      Alert.alert('Unable to update password, please try again');
       throw new Error(`Failed to update email: ${error.message}`);
     }
   }
