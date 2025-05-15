@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {StyleSheet, Switch, Text, TouchableOpacity, View} from 'react-native';
 import {DefaultTheme, Provider} from 'react-native-paper';
 import {TimePickerModal} from 'react-native-paper-dates';
@@ -20,6 +20,11 @@ function NotificationSettingsComponent({
   const [isChangeTimeButtonVisible, setIsChangeTimeButtonVisible] =
     useState(false);
   const [newReminderTime, setNewReminderTime] = useState(reminderTime);
+
+  useEffect(() => {
+    setNewEnableNotifications(enableNotifications);
+    setNewReminderTime(reminderTime);
+  }, [enableNotifications, reminderTime]);
 
   const onIsNotificationsEnabledSwitchToggle = async (
     updatedEnabledState: boolean,

@@ -1,8 +1,9 @@
-import {useContext, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {IconButton, TextInput} from 'react-native-paper';
 import {AuthContext} from '../../../App';
 import {updateEmail, updatePassword} from '../../api/settings';
+import validator from 'validator';
 
 interface AccountSettings {
   email: string;
@@ -18,9 +19,15 @@ function AccountSettingsComponent({email, userId}: AccountSettings) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  const isEmailValid =
+    !!newEmail.length && newEmail !== email && validator.isEmail(newEmail);
   const isPasswordValid = password.length > 7;
   const isConfirmPasswordValid =
     !!confirmPassword.length && isPasswordValid && confirmPassword === password;
+
+  useEffect(() => {
+    setNewEmail(email);
+  }, [email]);
 
   const onEmailSave = () => {
     setIsChangeEmailVisible(false);
@@ -45,8 +52,6 @@ function AccountSettingsComponent({email, userId}: AccountSettings) {
 
   return (
     <View>
-      <Text>{newEmail}</Text>
-
       <Text style={styles.sectionHeader}>Account</Text>
       <View style={styles.sectionContent}>
         <View>
@@ -68,18 +73,19 @@ function AccountSettingsComponent({email, userId}: AccountSettings) {
                   setNewEmail(event.toLowerCase())
                 }
                 style={
-                  isPasswordValid
+                  isEmailValid
                     ? styles.input
                     : [styles.input, styles.invalidInput]
                 }
+                onSubmitEditing={() => isEmailValid && onEmailSave()}
               />
 
               <Button
                 title="Save email"
-                disabled={!newEmail.length || newEmail === email}
-                onPress={() => onEmailSave()}
+                disabled={!isEmailValid}
+                onPress={onEmailSave}
               />
-              <Button title="Cancel" onPress={() => onEmailCancel()} />
+              <Button title="Cancel" onPress={onEmailCancel} />
             </View>
           )}
         </View>
@@ -108,7 +114,9 @@ function AccountSettingsComponent({email, userId}: AccountSettings) {
                 underlineColor={isPasswordValid ? 'lightgray' : 'darkred'}
                 value={password}
                 onChangeText={(event: string) => setPassword(event)}
-                onSubmitEditing={() => onPasswordSave()}
+                onSubmitEditing={() =>
+                  isConfirmPasswordValid && onPasswordSave()
+                }
               />
             </View>
             <View>
@@ -128,7 +136,9 @@ function AccountSettingsComponent({email, userId}: AccountSettings) {
                 }
                 value={confirmPassword}
                 onChangeText={(event: string) => setConfirmPassword(event)}
-                onSubmitEditing={() => onPasswordSave()}
+                onSubmitEditing={() =>
+                  isConfirmPasswordValid && onPasswordSave()
+                }
               />
             </View>
 

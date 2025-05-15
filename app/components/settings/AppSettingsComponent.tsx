@@ -1,5 +1,5 @@
 import {Picker} from '@react-native-picker/picker';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Provider} from 'react-native-paper';
 import {updateAppSettings} from '../../api/settings';
@@ -44,8 +44,11 @@ function AppSettingsComponent({weekStartsOn, userId}: AppSettings) {
   const [newWeekStarts, setNewWeekStarts] = useState(weekStartsOn);
   const [isPickerVisible, setIsPickerVisible] = useState(false);
 
+  useEffect(() => {
+    setNewWeekStarts(weekStartsOn);
+  }, [weekStartsOn]);
+
   const onWeekStartsSave = async () => {
-    // TODO: Save state to DB
     await updateAppSettings(userId, newWeekStarts);
     setIsPickerVisible(false);
   };

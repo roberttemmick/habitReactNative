@@ -6,7 +6,6 @@ const route = '/settings';
 export const fetchSettings = async (userId: number) => {
   try {
     const response = await api.get(`${route}/${userId}`);
-    console.log('SETTINGS RESPONSE', response);
     return response.data;
   } catch (error: unknown) {
     if (error instanceof Error) {
