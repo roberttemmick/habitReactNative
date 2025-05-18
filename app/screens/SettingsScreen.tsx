@@ -12,7 +12,9 @@ import AboutComponent from '../components/settings/About';
 function SettingsScreen() {
   const [userId, setUserId] = useState(0);
   const [newEmail, setNewEmail] = useState('');
-  const [newWeekStartsOn, setNewWeekStartsOn] = useState('');
+  const [newWeekStartsOn, setNewWeekStartsOn] = useState<'sunday' | 'monday'>(
+    'sunday',
+  );
   const [newEnableNotifications, setNewEnableNotifications] = useState(false);
   const [newReminderTime, setNewReminderTime] = useState('21:00');
 

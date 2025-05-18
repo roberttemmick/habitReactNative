@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {View} from 'react-native';
 import {
   Calendar,
@@ -11,6 +11,7 @@ import {sub, add} from 'date-fns';
 import {DateHabit} from '../../types/types';
 import {fetchSettings} from '../../api/settings';
 import {getUserId} from '../../api/auth';
+import {useFocusEffect} from '@react-navigation/native';
 
 function CalendarWrapper({
   calendarMinDateId,
@@ -53,18 +54,25 @@ function CalendarWrapper({
     setCurrentCalendarMonth(add(currentCalendarMonth, {months: 1}));
   }, [currentCalendarMonth]);
 
-  React.useEffect(() => {
-    const getSettings = async () => {
-      const userId = await getUserId();
-      if (userId) {
-        const settings = await fetchSettings(userId);
-        console.log('SETTINGS', settings);
-        setWeekStartsOn(settings.weekStartsOn.toLowerCase());
-      }
-    };
+  useFocusEffect(
+    React.useCallback(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      let isActive = true;
 
-    getSettings();
-  }, []);
+      const getSettings = async () => {
+        const userId = await getUserId();
+        if (userId) {
+          const settings = await fetchSettings(userId);
+          setWeekStartsOn(settings.weekStartsOn.toLowerCase());
+        }
+      };
+      getSettings();
+
+      return () => {
+        isActive = false;
+      };
+    }, []),
+  );
 
   return (
     <View>
