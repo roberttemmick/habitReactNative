@@ -52,124 +52,103 @@ function AccountSettingsComponent({email, userId}: AccountSettings) {
 
   return (
     <View>
-      <Text style={styles.sectionHeader}>Account</Text>
-      <View style={styles.sectionContent}>
-        <View>
-          {!isChangeEmailVisible && (
-            <View style={styles.buttonWrapper}>
-              <TouchableOpacity
-                style={styles.iconButton}
-                onPress={() => setIsChangeEmailVisible(true)}>
-                <Text style={styles.buttonText}>{'Change Email >'}</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          {isChangeEmailVisible && (
-            <View>
-              <Text style={styles.buttonLabel}>Email</Text>
-              <TextInput
-                value={newEmail}
-                onChangeText={(event: string) =>
-                  setNewEmail(event.toLowerCase())
-                }
-                style={
-                  isEmailValid
-                    ? styles.input
-                    : [styles.input, styles.invalidInput]
-                }
-                onSubmitEditing={() => isEmailValid && onEmailSave()}
-              />
-
-              <Button
-                title="Save email"
-                disabled={!isEmailValid}
-                onPress={onEmailSave}
-              />
-              <Button title="Cancel" onPress={onEmailCancel} />
-            </View>
-          )}
-        </View>
-
-        {!isChangePasswordVisible && (
+      <View>
+        {!isChangeEmailVisible && (
           <View style={styles.buttonWrapper}>
             <TouchableOpacity
               style={styles.iconButton}
-              onPress={() => setIsChangePasswordVisible(true)}>
-              <Text style={styles.buttonText}>{'Change Password >'}</Text>
+              onPress={() => setIsChangeEmailVisible(true)}>
+              <Text style={styles.buttonText}>{'Change Email >'}</Text>
             </TouchableOpacity>
           </View>
         )}
-        {isChangePasswordVisible && (
+        {isChangeEmailVisible && (
           <View>
-            <View>
-              <TextInput
-                placeholder="New Password"
-                secureTextEntry={true}
-                style={
-                  isPasswordValid
-                    ? styles.input
-                    : [styles.input, styles.invalidInput]
-                }
-                activeUnderlineColor={isPasswordValid ? 'green' : 'darkred'}
-                underlineColor={isPasswordValid ? 'lightgray' : 'darkred'}
-                value={password}
-                onChangeText={(event: string) => setPassword(event)}
-                onSubmitEditing={() =>
-                  isConfirmPasswordValid && onPasswordSave()
-                }
-              />
-            </View>
-            <View>
-              <TextInput
-                placeholder="Confirm New Password"
-                secureTextEntry={true}
-                style={
-                  isConfirmPasswordValid
-                    ? styles.input
-                    : [styles.input, styles.invalidInput]
-                }
-                activeUnderlineColor={
-                  isConfirmPasswordValid ? 'green' : 'darkred'
-                }
-                underlineColor={
-                  isConfirmPasswordValid ? 'lightgray' : 'darkred'
-                }
-                value={confirmPassword}
-                onChangeText={(event: string) => setConfirmPassword(event)}
-                onSubmitEditing={() =>
-                  isConfirmPasswordValid && onPasswordSave()
-                }
-              />
-            </View>
+            <Text style={styles.buttonLabel}>Email</Text>
+            <TextInput
+              value={newEmail}
+              onChangeText={(event: string) => setNewEmail(event.toLowerCase())}
+              style={
+                isEmailValid
+                  ? styles.input
+                  : [styles.input, styles.invalidInput]
+              }
+              onSubmitEditing={() => isEmailValid && onEmailSave()}
+            />
 
             <Button
-              title="Save Password"
-              disabled={!isPasswordValid || !isConfirmPasswordValid}
-              onPress={() => onPasswordSave()}
+              title="Save email"
+              disabled={!isEmailValid}
+              onPress={onEmailSave}
             />
-            <Button title="Cancel" onPress={() => onPasswordCancel()} />
+            <Button title="Cancel" onPress={onEmailCancel} />
           </View>
         )}
-        <TouchableOpacity style={styles.iconButton} onPress={signOut}>
-          <Text style={styles.buttonText}>Log Out</Text>
-          <IconButton icon="logout" size={18} style={styles.icon} />
-        </TouchableOpacity>
       </View>
+
+      {!isChangePasswordVisible && (
+        <View style={styles.buttonWrapper}>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => setIsChangePasswordVisible(true)}>
+            <Text style={styles.buttonText}>{'Change Password >'}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+      {isChangePasswordVisible && (
+        <View>
+          <View>
+            <TextInput
+              placeholder="New Password"
+              secureTextEntry={true}
+              style={
+                isPasswordValid
+                  ? styles.input
+                  : [styles.input, styles.invalidInput]
+              }
+              activeUnderlineColor={isPasswordValid ? 'green' : 'darkred'}
+              underlineColor={isPasswordValid ? 'lightgray' : 'darkred'}
+              value={password}
+              onChangeText={(event: string) => setPassword(event)}
+              onSubmitEditing={() => isConfirmPasswordValid && onPasswordSave()}
+            />
+          </View>
+          <View>
+            <TextInput
+              placeholder="Confirm New Password"
+              secureTextEntry={true}
+              style={
+                isConfirmPasswordValid
+                  ? styles.input
+                  : [styles.input, styles.invalidInput]
+              }
+              activeUnderlineColor={
+                isConfirmPasswordValid ? 'green' : 'darkred'
+              }
+              underlineColor={isConfirmPasswordValid ? 'lightgray' : 'darkred'}
+              value={confirmPassword}
+              onChangeText={(event: string) => setConfirmPassword(event)}
+              onSubmitEditing={() => isConfirmPasswordValid && onPasswordSave()}
+            />
+          </View>
+
+          <Button
+            title="Save Password"
+            disabled={!isPasswordValid || !isConfirmPasswordValid}
+            onPress={() => onPasswordSave()}
+          />
+          <Button title="Cancel" onPress={() => onPasswordCancel()} />
+        </View>
+      )}
+      <TouchableOpacity style={styles.iconButton} onPress={signOut}>
+        <Text style={styles.buttonText}>Log Out</Text>
+        <IconButton icon="logout" size={18} style={styles.icon} />
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionContent: {
-    padding: '5%',
-    borderBottomColor: 'lightgray',
-    borderBottomWidth: 1,
-  },
-  sectionHeader: {
-    fontSize: 30,
-    fontWeight: 200,
-    paddingTop: '5%',
-  },
   input: {backgroundColor: 'rgba(0,0,0,0)', color: 'black', fontWeight: '300'},
   buttonLabel: {
     fontWeight: 200,

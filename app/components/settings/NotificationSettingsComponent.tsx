@@ -57,23 +57,20 @@ function NotificationSettingsComponent({
 
   return (
     <View>
-      <Text style={styles.sectionHeader}>Notifications</Text>
-      <View style={styles.sectionContent}>
-        <Text style={styles.buttonLabel}>Enable Notifications</Text>
-        <View style={styles.notificationTimeContainer}>
-          <Switch
-            trackColor={{false: 'darkRed', true: 'green'}}
-            onValueChange={onIsNotificationsEnabledSwitchToggle}
-            value={newEnableNotifications}
-          />
+      <Text style={styles.buttonLabel}>Enable Notifications</Text>
+      <View style={styles.notificationTimeContainer}>
+        <Switch
+          trackColor={{false: 'darkRed', true: 'green'}}
+          onValueChange={onIsNotificationsEnabledSwitchToggle}
+          value={newEnableNotifications}
+        />
 
-          <TouchableOpacity
-            style={styles.iconButton}
-            disabled={!newEnableNotifications}
-            onPress={() => setIsChangeTimeButtonVisible(true)}>
-            <Text style={styles.buttonText}>{`${newReminderTime} >`}</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={styles.iconButton}
+          disabled={!newEnableNotifications}
+          onPress={() => setIsChangeTimeButtonVisible(true)}>
+          <Text style={styles.buttonText}>{`${newReminderTime} >`}</Text>
+        </TouchableOpacity>
       </View>
 
       <Provider theme={theme}>
@@ -93,14 +90,6 @@ function NotificationSettingsComponent({
 }
 
 const styles = StyleSheet.create({
-  sectionContent: {
-    padding: '5%',
-  },
-  sectionHeader: {
-    fontSize: 30,
-    fontWeight: 200,
-    paddingTop: '5%',
-  },
   buttonLabel: {
     fontWeight: 200,
     marginBottom: 4,
@@ -109,11 +98,10 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 24,
+    gap: 12,
   },
   iconButton: {
     alignItems: 'center',
-    paddingHorizontal: 8,
     justifyContent: 'flex-start',
     flexDirection: 'row',
   },

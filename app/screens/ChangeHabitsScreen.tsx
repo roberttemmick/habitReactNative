@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   contentWrapper: {height: '100%', padding: '5%'},
   divider: {
     borderBottomWidth: 1,
-    borderBottomColor: 'lightgray',
+    borderBottomColor: 'rgb(160, 160, 160)',
     marginHorizontal: '-5%',
     marginBottom: '5%',
   },
