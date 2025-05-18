@@ -6,16 +6,16 @@ import {updateAppSettings} from '../../api/settings';
 const days = [
   {
     label: 'Sunday',
-    value: 'Sunday',
+    value: 'sunday',
   },
   {
     label: 'Monday',
-    value: 'Monday',
+    value: 'monday',
   },
 ];
 
 interface AppSettings {
-  weekStartsOn: string;
+  weekStartsOn: 'sunday' | 'monday';
   userId: number;
 }
 
