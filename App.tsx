@@ -1,7 +1,7 @@
 import * as React from 'react';
-import {Alert, Text, View} from 'react-native';
+import {Alert, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {IconButton} from 'react-native-paper';
-import {NavigationContainer} from '@react-navigation/native';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {login, logout, signup} from './app/api/auth';
 import HomeScreen from './app/screens/HomeScreen';
@@ -9,6 +9,10 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import SettingsScreen from './app/screens/SettingsScreen';
 import ChangeHabitsScreen from './app/screens/ChangeHabitsScreen';
 import LoginScreen from './app/screens/LoginScreen';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 export const AuthContext = React.createContext({
   signOut: () => {},
@@ -81,9 +85,7 @@ function RootTabs() {
       screenOptions={{
         tabBarActiveTintColor: 'darkred',
         tabBarInactiveTintColor: 'gray',
-        headerTitleStyle: {
-          display: 'none',
-        },
+        headerShown: false,
       }}>
       {isSignedIn && (
         <>
@@ -222,13 +224,45 @@ export default function App() {
 
   const isSignedIn = state.authToken != null;
 
+  const MyTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: 'rgb(203, 213, 200)',
+      primary: 'darkred',
+    },
+  };
+
   return (
-    <AuthContext.Provider value={authContext}>
-      <SignInContext.Provider value={isSignedIn}>
-        <NavigationContainer>
-          <RootTabs />
-        </NavigationContainer>
-      </SignInContext.Provider>
-    </AuthContext.Provider>
+    <SafeAreaProvider>
+      <AuthContext.Provider value={authContext}>
+        <SignInContext.Provider value={isSignedIn}>
+          <NavigationContainer theme={MyTheme}>
+            {/* <SafeAreaView style={{flex: 1, backgroundColor: 'red'}}>
+              <RootTabs />
+            </SafeAreaView> */}
+            <SafeAreaContainer />
+          </NavigationContainer>
+        </SignInContext.Provider>
+      </AuthContext.Provider>
+    </SafeAreaProvider>
+  );
+}
+
+function SafeAreaContainer() {
+  const inset = useSafeAreaInsets();
+
+  const styles = StyleSheet.create({
+    container: {
+      height: '100%',
+      paddingTop: inset.top,
+      backgroundColor: 'rgb(203, 213, 200)',
+    },
+  });
+
+  return (
+    <View style={styles.container}>
+      <RootTabs />
+    </View>
   );
 }

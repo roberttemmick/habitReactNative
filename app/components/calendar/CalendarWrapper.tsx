@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {View} from 'react-native';
 import {
   Calendar,
@@ -9,6 +9,8 @@ import {
 import {CustomCalendar} from './Calendar';
 import {sub, add} from 'date-fns';
 import {DateHabit} from '../../types/types';
+import {fetchSettings} from '../../api/settings';
+import {getUserId} from '../../api/auth';
 
 function CalendarWrapper({
   calendarMinDateId,
@@ -25,6 +27,7 @@ function CalendarWrapper({
 }) {
   const [currentCalendarMonth, setCurrentCalendarMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [weekStartsOn, setWeekStartsOn] = useState('sunday');
 
   const handleDayPress = (dateId: string) => {
     setCurrentCalendarMonth(fromDateId(dateId));
@@ -50,6 +53,19 @@ function CalendarWrapper({
     setCurrentCalendarMonth(add(currentCalendarMonth, {months: 1}));
   }, [currentCalendarMonth]);
 
+  React.useEffect(() => {
+    const getSettings = async () => {
+      const userId = await getUserId();
+      if (userId) {
+        const settings = await fetchSettings(userId);
+        console.log('SETTINGS', settings);
+        setWeekStartsOn(settings.weekStartsOn.toLowerCase());
+      }
+    };
+
+    getSettings();
+  }, []);
+
   return (
     <View>
       <Calendar.VStack justifyContent="flex-start" spacing={12}>
@@ -64,6 +80,7 @@ function CalendarWrapper({
           onPreviousMonthPress={handlePreviousMonth}
           selectedDateHabit={selectedDateHabit}
           streakCount={streakCount}
+          calendarFirstDayOfWeek={weekStartsOn}
         />
       </Calendar.VStack>
     </View>
