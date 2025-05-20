@@ -17,32 +17,68 @@ const days = [
 
 const colors = [
   {
-    label: 'Sage',
-    value: '#CBD5C8',
-  },
-  {
-    label: 'Dusty Blue',
-    value: '#C9D9DF',
-  },
-  {
-    label: 'Warm Taupe',
-    value: '#D8CFC4',
-  },
-  {
     label: 'Blush Rose',
     value: '#E2C6C2',
   },
   {
-    label: 'Ivory',
-    value: '#F8F9F7',
+    label: 'Butter Cream',
+    value: '#FAF2D3',
+  },
+  {
+    label: 'Champagne Beige',
+    value: '#EFE5DA',
   },
   {
     label: 'Deep Forest',
     value: '#3D4A40',
   },
   {
+    label: 'Dusty Blue',
+    value: '#C9D9DF',
+  },
+  {
+    label: 'Ivory',
+    value: '#F8F9F7',
+  },
+  {
+    label: 'Lavender Fog',
+    value: '#DCD6E0',
+  },
+  {
+    label: 'Moss Grey',
+    value: '#A8B0A2',
+  },
+  {
+    label: 'Muted Clay',
+    value: '#C8A89E',
+  },
+  {
     label: 'Pale Lemon',
     value: '#F5F3CB',
+  },
+  {
+    label: 'Pebble Grey',
+    value: '#DADBD6',
+  },
+  {
+    label: 'Sage',
+    value: '#CBD5C8',
+  },
+  {
+    label: 'Slate Mist',
+    value: '#A0A8AF',
+  },
+  {
+    label: 'Terracotta Dust',
+    value: '#D7A894',
+  },
+  {
+    label: 'Warm Taupe',
+    value: '#D8CFC4',
+  },
+  {
+    label: 'Willow Green',
+    value: '#B6C2AE',
   },
 ];
 
