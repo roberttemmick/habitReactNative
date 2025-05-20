@@ -187,7 +187,6 @@ export default function App() {
   const [settings, setSettings] = useState({backgroundColor: '#F8F9F7'});
 
   const refreshSettings = useCallback(async (newSettings: any) => {
-    console.log('@@@', newSettings);
     setSettings(newSettings);
   }, []);
 

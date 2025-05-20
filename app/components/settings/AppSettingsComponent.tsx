@@ -91,8 +91,9 @@ function AppSettingsComponent({
   };
 
   const onBackgroundCancel = () => {
-    setIsBackgroundPickerVisible(false);
+    refreshSettings({backgroundColor});
     setSelectedBackground(backgroundColor);
+    setIsBackgroundPickerVisible(false);
   };
 
   const getBackgroundLabel = (): string => {

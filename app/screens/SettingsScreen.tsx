@@ -12,8 +12,7 @@ import AboutComponent from '../components/settings/About';
 function SettingsScreen() {
   const [userId, setUserId] = useState(0);
   const [newEmail, setNewEmail] = useState('');
-  const [newBackgroundColor, setNewBackgroundColor] =
-    useState<string>('');
+  const [newBackgroundColor, setNewBackgroundColor] = useState<string>('');
   const [newWeekStartsOn, setNewWeekStartsOn] = useState<'sunday' | 'monday'>(
     'sunday',
   );
@@ -35,7 +34,6 @@ function SettingsScreen() {
             reminderTime,
             backgroundColor,
           } = await fetchSettings(userId);
-          console.log('background', backgroundColor);
           const {email} = await getUser(userId);
 
           setNewEmail(email);
