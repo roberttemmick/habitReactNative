@@ -91,7 +91,7 @@ function AppSettingsComponent({
     const color = colors.find(c => {
       return c.value === selectedBackground;
     });
-    return color?.label;
+    return color ? color.label : '';
   };
 
   return (
@@ -107,7 +107,7 @@ function AppSettingsComponent({
               <Text
                 style={
                   styles.buttonText
-                }>{`${newWeekStarts.toUpperCase()} >`}</Text>
+                }>{`${newWeekStarts.charAt(0).toUpperCase() + newWeekStarts.slice(1)} >`}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -142,7 +142,8 @@ function AppSettingsComponent({
             <TouchableOpacity
               style={styles.iconButton}
               onPress={() => setIsBackgroundPickerVisible(true)}>
-              <Text style={styles.buttonText}>{`${getBackgroundLabel()} >`}</Text>
+              <Text
+                style={styles.buttonText}>{`${getBackgroundLabel()} >`}</Text>
             </TouchableOpacity>
           </View>
         )}

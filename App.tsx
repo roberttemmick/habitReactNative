@@ -2,7 +2,7 @@ import {Alert, StyleSheet, Text, View} from 'react-native';
 import {IconButton} from 'react-native-paper';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {login, logout, signup} from './app/api/auth';
+import {getUserId, login, logout, signup} from './app/api/auth';
 import HomeScreen from './app/screens/HomeScreen';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import SettingsScreen from './app/screens/SettingsScreen';
@@ -12,7 +12,15 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import {createContext, useContext, useEffect, useMemo, useReducer} from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react';
+import {fetchSettings} from './app/api/settings';
 
 export const AuthContext = createContext({
   signOut: () => {},
@@ -167,6 +175,8 @@ export default function App() {
     },
   );
 
+  const [settings, setSettings] = useState({backgroundColor: '#F8F9F7'});
+
   useEffect(() => {
     const bootstrapAsync = async () => {
       let authToken;
@@ -177,13 +187,29 @@ export default function App() {
         console.log('Auth Token restoration failed: ', e);
       }
 
-      // After restoring token, we may need to validate it in production apps
-
       dispatch({type: 'RESTORE_TOKEN', token: authToken});
     };
 
     bootstrapAsync();
+    handleSettingsChange();
   }, []);
+
+  const handleSettingsChange = async () => {
+    let newSettings;
+
+    try {
+      const userId = await getUserId();
+      if (userId) {
+        newSettings = await fetchSettings(userId);
+
+        console.log('!!!', newSettings);
+
+        setSettings(newSettings);
+      }
+    } catch (e) {
+      console.log('Failed to fetch settings: ', e);
+    }
+  };
 
   const authContext = useMemo(
     () => ({
@@ -228,7 +254,7 @@ export default function App() {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
-      background: '#CBD5C8',
+      background: settings?.backgroundColor,
       primary: 'darkred',
     },
   };
@@ -238,7 +264,7 @@ export default function App() {
       <AuthContext.Provider value={authContext}>
         <SignInContext.Provider value={isSignedIn}>
           <NavigationContainer theme={MyTheme}>
-            <SafeAreaContainer />
+            <SafeAreaContainer backgroundColor={settings?.backgroundColor} />
           </NavigationContainer>
         </SignInContext.Provider>
       </AuthContext.Provider>
@@ -246,14 +272,14 @@ export default function App() {
   );
 }
 
-function SafeAreaContainer() {
+function SafeAreaContainer({backgroundColor}: {backgroundColor: string}) {
   const inset = useSafeAreaInsets();
 
   const styles = StyleSheet.create({
     container: {
       height: '100%',
       paddingTop: inset.top,
-      backgroundColor: '#CBD5C8',
+      backgroundColor: backgroundColor,
     },
   });
 
