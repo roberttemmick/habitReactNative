@@ -1,5 +1,4 @@
-import * as React from 'react';
-import {Alert, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Alert, StyleSheet, Text, View} from 'react-native';
 import {IconButton} from 'react-native-paper';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,19 +12,19 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import {useEffect, useMemo, useReducer} from 'react';
+import {createContext, useContext, useEffect, useMemo, useReducer} from 'react';
 
-export const AuthContext = React.createContext({
+export const AuthContext = createContext({
   signOut: () => {},
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   signIn: ({email, password}: {email: string; password: string}) => {},
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   signUp: ({email, password}: {email: string; password: string}) => {},
 });
-const SignInContext = React.createContext(false);
+const SignInContext = createContext(false);
 
 function useIsSignedIn(): boolean {
-  const isSignedIn = React.useContext(SignInContext);
+  const isSignedIn = useContext(SignInContext);
   return isSignedIn;
 }
 

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import AddHabitComponent from '../components/AddHabitComponent';
 import {Alert, StyleSheet, View} from 'react-native';
 import ChangeHabitsList from '../components/ChangeHabitsList';

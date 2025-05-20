@@ -1,4 +1,3 @@
-import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import HabitComponent from './HabitComponent';
 import {HabitEntry} from '../types/types';

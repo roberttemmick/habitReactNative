@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {JSX, useCallback, useEffect, useMemo, useState} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import CalendarWrapper from '../components/calendar/CalendarWrapper';
 import moment from 'moment';
@@ -14,7 +14,7 @@ import {fetchHabits} from '../api/habits';
 import HabitEntriesList from '../components/HabitEntriesList';
 import {getUserId} from '../api/auth';
 
-function HomeScreen(): React.JSX.Element {
+function HomeScreen(): JSX.Element {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const selectedDateFormatted = moment(selectedDate).format('MMM Do YYYY');
   const today = moment().startOf('day');

@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import {View} from 'react-native';
 import {
   Calendar,
@@ -55,7 +55,7 @@ function CalendarWrapper({
   }, [currentCalendarMonth]);
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       let isActive = true;
 

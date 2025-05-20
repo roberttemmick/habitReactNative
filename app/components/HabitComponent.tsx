@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import {JSX, useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {IconButton} from 'react-native-paper';
 import {updateHabitEntry} from '../api/habitEntries';
@@ -13,8 +13,8 @@ function HabitComponent({
   name: string;
   completed: boolean | null;
   emitCompletedStateChangeEvent: Function;
-}): React.JSX.Element {
-  const [isComplete, setIsComplete] = React.useState<boolean | null>(completed);
+}): JSX.Element {
+  const [isComplete, setIsComplete] = useState<boolean | null>(completed);
 
   useEffect(() => {
     setIsComplete(completed);

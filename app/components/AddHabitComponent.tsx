@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import {View, StyleSheet, Button, TextInput} from 'react-native';
 
 function AddHabitComponent({
@@ -6,7 +6,7 @@ function AddHabitComponent({
 }: {
   addHabitEventEmitter: Function;
 }) {
-  const [newHabitName, setNewHabitName] = React.useState<string>('');
+  const [newHabitName, setNewHabitName] = useState<string>('');
 
   const handleAddHabit = () => {
     addHabitEventEmitter(newHabitName);

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {View, StyleSheet, TextInput} from 'react-native';
 import {Habit} from '../types/types';
 import {IconButton} from 'react-native-paper';
