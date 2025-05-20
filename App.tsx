@@ -13,6 +13,7 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import {useEffect, useMemo, useReducer} from 'react';
 
 export const AuthContext = React.createContext({
   signOut: () => {},
@@ -131,7 +132,7 @@ function RootTabs() {
 }
 
 export default function App() {
-  const [state, dispatch] = React.useReducer(
+  const [state, dispatch] = useReducer(
     (prevState: any, action: any) => {
       switch (action.type) {
         case 'RESTORE_TOKEN':
@@ -167,7 +168,7 @@ export default function App() {
     },
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     const bootstrapAsync = async () => {
       let authToken;
 
@@ -185,7 +186,7 @@ export default function App() {
     bootstrapAsync();
   }, []);
 
-  const authContext = React.useMemo(
+  const authContext = useMemo(
     () => ({
       signIn: async ({email, password}: {email: string; password: string}) => {
         try {
@@ -228,7 +229,7 @@ export default function App() {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
-      background: 'rgb(203, 213, 200)',
+      background: '#CBD5C8',
       primary: 'darkred',
     },
   };
@@ -238,9 +239,6 @@ export default function App() {
       <AuthContext.Provider value={authContext}>
         <SignInContext.Provider value={isSignedIn}>
           <NavigationContainer theme={MyTheme}>
-            {/* <SafeAreaView style={{flex: 1, backgroundColor: 'red'}}>
-              <RootTabs />
-            </SafeAreaView> */}
             <SafeAreaContainer />
           </NavigationContainer>
         </SignInContext.Provider>
@@ -256,7 +254,7 @@ function SafeAreaContainer() {
     container: {
       height: '100%',
       paddingTop: inset.top,
-      backgroundColor: 'rgb(203, 213, 200)',
+      backgroundColor: '#CBD5C8',
     },
   });
 

@@ -149,7 +149,7 @@ function AccountSettingsComponent({email, userId}: AccountSettings) {
 }
 
 const styles = StyleSheet.create({
-  input: {backgroundColor: 'rgba(0,0,0,0)', color: 'black', fontWeight: '300'},
+  input: {backgroundColor: 'rgba(0,0,0,0)', color: 'black', fontWeight: 300},
   buttonLabel: {
     fontWeight: 200,
   },

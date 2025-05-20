@@ -12,6 +12,8 @@ import AboutComponent from '../components/settings/About';
 function SettingsScreen() {
   const [userId, setUserId] = useState(0);
   const [newEmail, setNewEmail] = useState('');
+  const [newBackgroundColor, setNewBackgroundColor] =
+    useState<string>('');
   const [newWeekStartsOn, setNewWeekStartsOn] = useState<'sunday' | 'monday'>(
     'sunday',
   );
@@ -27,12 +29,18 @@ function SettingsScreen() {
         }
 
         if (userId) {
-          const {weekStartsOn, enableNotifications, reminderTime} =
-            await fetchSettings(userId);
+          const {
+            weekStartsOn,
+            enableNotifications,
+            reminderTime,
+            backgroundColor,
+          } = await fetchSettings(userId);
+          console.log('background', backgroundColor);
           const {email} = await getUser(userId);
 
           setNewEmail(email);
           setNewWeekStartsOn(weekStartsOn);
+          setNewBackgroundColor(backgroundColor);
           setNewEnableNotifications(enableNotifications);
           setNewReminderTime(reminderTime);
         }
@@ -53,15 +61,19 @@ function SettingsScreen() {
               <AccountSettingsComponent email={newEmail} userId={userId} />
             </View>
           </View>
-          <View style={styles.card}>
-            <Text style={styles.sectionHeader}>Application</Text>
-            <View style={styles.sectionContent}>
-              <AppSettingsComponent
-                weekStartsOn={newWeekStartsOn}
-                userId={userId}
-              />
+          {!!newBackgroundColor && (
+            <View style={styles.card}>
+              <Text style={styles.sectionHeader}>Application</Text>
+              <View style={styles.sectionContent}>
+                <AppSettingsComponent
+                  weekStartsOn={newWeekStartsOn}
+                  backgroundColor={newBackgroundColor}
+                  userId={userId}
+                />
+              </View>
             </View>
-          </View>
+          )}
+
           <View style={styles.card}>
             <Text style={styles.sectionHeader}>Notifications</Text>
             <View style={styles.sectionContent}>

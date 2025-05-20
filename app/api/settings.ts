@@ -37,10 +37,12 @@ export const updateNotificationSettings = async (
 export const updateAppSettings = async (
   userId: number,
   weekStartsOn: string,
+  backgroundColor: string,
 ) => {
   try {
     const response = await api.put(`${route}/app/${userId}`, {
       weekStartsOn,
+      backgroundColor,
     });
     return response.data;
   } catch (error: unknown) {
