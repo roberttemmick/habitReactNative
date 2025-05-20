@@ -14,6 +14,7 @@ import {
 } from 'react-native-safe-area-context';
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -29,7 +30,15 @@ export const AuthContext = createContext({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   signUp: ({email, password}: {email: string; password: string}) => {},
 });
+
 const SignInContext = createContext(false);
+
+export const SettingsContext = createContext({
+  settings: {backgroundColor: '#F8F9F7'},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  refreshSettings: async (newSettings: any) => {
+  },
+});
 
 function useIsSignedIn(): boolean {
   const isSignedIn = useContext(SignInContext);
@@ -177,6 +186,11 @@ export default function App() {
 
   const [settings, setSettings] = useState({backgroundColor: '#F8F9F7'});
 
+  const refreshSettings = useCallback(async (newSettings: any) => {
+    console.log('@@@', newSettings);
+    setSettings(newSettings);
+  }, []);
+
   useEffect(() => {
     const bootstrapAsync = async () => {
       let authToken;
@@ -190,26 +204,21 @@ export default function App() {
       dispatch({type: 'RESTORE_TOKEN', token: authToken});
     };
 
-    bootstrapAsync();
-    handleSettingsChange();
-  }, []);
-
-  const handleSettingsChange = async () => {
-    let newSettings;
-
-    try {
-      const userId = await getUserId();
-      if (userId) {
-        newSettings = await fetchSettings(userId);
-
-        console.log('!!!', newSettings);
-
-        setSettings(newSettings);
+    const getSettings = async () => {
+      try {
+        const userId = await getUserId();
+        if (userId) {
+          const newSettings = await fetchSettings(userId);
+          refreshSettings(newSettings);
+        }
+      } catch (e) {
+        console.log('Failed to fetch settings: ', e);
       }
-    } catch (e) {
-      console.log('Failed to fetch settings: ', e);
-    }
-  };
+    };
+
+    bootstrapAsync();
+    getSettings();
+  }, [refreshSettings]);
 
   const authContext = useMemo(
     () => ({
@@ -263,9 +272,11 @@ export default function App() {
     <SafeAreaProvider>
       <AuthContext.Provider value={authContext}>
         <SignInContext.Provider value={isSignedIn}>
-          <NavigationContainer theme={MyTheme}>
-            <SafeAreaContainer backgroundColor={settings?.backgroundColor} />
-          </NavigationContainer>
+          <SettingsContext value={{settings, refreshSettings}}>
+            <NavigationContainer theme={MyTheme}>
+              <SafeAreaContainer backgroundColor={settings?.backgroundColor} />
+            </NavigationContainer>
+          </SettingsContext>
         </SignInContext.Provider>
       </AuthContext.Provider>
     </SafeAreaProvider>

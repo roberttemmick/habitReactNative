@@ -1,7 +1,8 @@
 import {Picker} from '@react-native-picker/picker';
-import {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {updateAppSettings} from '../../api/settings';
+import {SettingsContext} from '../../../App';
 
 const days = [
   {
@@ -63,6 +64,8 @@ function AppSettingsComponent({
   const [isBackgroundPickerVisible, setIsBackgroundPickerVisible] =
     useState(false);
 
+  const {refreshSettings} = useContext(SettingsContext);
+
   useEffect(() => {
     setNewWeekStarts(weekStartsOn);
   }, [weekStartsOn]);
@@ -75,6 +78,11 @@ function AppSettingsComponent({
   const onWeekStartsOnCancel = () => {
     setIsWeekStartsOnPickerVisible(false);
     setNewWeekStarts(weekStartsOn);
+  };
+
+  const onSelectBackground = async (value: any) => {
+    refreshSettings({backgroundColor: value});
+    setSelectedBackground(value);
   };
 
   const onBackgroundSave = async () => {
@@ -104,10 +112,9 @@ function AppSettingsComponent({
             <TouchableOpacity
               style={styles.iconButton}
               onPress={() => setIsWeekStartsOnPickerVisible(true)}>
-              <Text
-                style={
-                  styles.buttonText
-                }>{`${newWeekStarts.charAt(0).toUpperCase() + newWeekStarts.slice(1)} >`}</Text>
+              <Text style={styles.buttonText}>{`${
+                newWeekStarts.charAt(0).toUpperCase() + newWeekStarts.slice(1)
+              } >`}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -151,7 +158,7 @@ function AppSettingsComponent({
           <View style={styles.pickerWrapper}>
             <Picker
               selectedValue={selectedBackground}
-              onValueChange={value => setSelectedBackground(value)}>
+              onValueChange={value => onSelectBackground(value)}>
               {colors.map((color, index) => {
                 return (
                   <Picker.Item
