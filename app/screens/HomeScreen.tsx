@@ -3,13 +3,15 @@ import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import CalendarWrapper from '../components/calendar/CalendarWrapper';
 import moment from 'moment';
 import {fromDateId, toDateId} from '@marceloterreiro/flash-calendar';
-import {DateHabit, HabitEntry} from '../types/types';
-import * as api from '../api/dateHabits';
-// import * as asyncStorage from '../asyncStorage/dateHabits';
-import {useFocusEffect} from '@react-navigation/native';
-import {fetchHabits} from '../api/habits';
-import HabitEntriesList from '../components/HabitEntriesList';
+import {DateHabit, Habit, HabitEntry} from '../types/types';
 import {getUserId} from '../api/auth';
+import * as habitsApi from '../api/habits';
+import * as habitsAsyncStorage from '../asyncStorage/habits';
+import * as dateHabitsApi from '../api/dateHabits';
+import * as dateHabitsAsyncStorage from '../asyncStorage/dateHabits';
+import {useFocusEffect} from '@react-navigation/native';
+import HabitEntriesList from '../components/HabitEntriesList';
+import {useFeatureFlag} from '../services/featureFlagService';
 
 function HomeScreen(): JSX.Element {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -19,42 +21,102 @@ function HomeScreen(): JSX.Element {
   const [dateHabits, setDateHabits] = useState<DateHabit[]>([]);
   const [streakCount, setStreakCount] = useState(0);
 
+  const isFfEnabled = useFeatureFlag('ffloggedin');
+
   const fetchData = async () => {
     try {
-      const userId = await getUserId();
+      let userId: number | null = null;
 
+      if (isFfEnabled) {
+        userId = await getUserId();
+      }
+
+      let initialFetchResponse: DateHabit[] = [];
       if (userId) {
-        const initialFetchResponse: DateHabit[] = await api.fetchDateHabits(userId);
-        const lastDate = initialFetchResponse.length
-          ? moment(
-              fromDateId(
-                initialFetchResponse[initialFetchResponse.length - 1].dateId,
-              ),
-            ).startOf('day')
-          : moment(new Date(moment().subtract(2, 'day').toDate()));
+        initialFetchResponse = await dateHabitsApi.fetchDateHabits(userId);
+      } else {
+        initialFetchResponse = await dateHabitsAsyncStorage.fetchDateHabits();
+      }
 
-        const dateDiff = lastDate.diff(today, 'day') || 0;
-        if (!dateDiff) {
-          setDateHabits(initialFetchResponse);
-        } else {
-          let newDateHabits = [];
-          for (let i = dateDiff + 1; i < 1; i++) {
-            newDateHabits.push({
-              dateId: toDateId(new Date(moment().add(i, 'day').toDate())),
-            });
-          }
-          const habits = await fetchHabits(userId);
-          const secondaryFetchResponse = await api.createDateHabits(
+      const lastDate = initialFetchResponse.length
+        ? moment(
+            fromDateId(
+              initialFetchResponse[initialFetchResponse.length - 1].dateId,
+            ),
+          ).startOf('day')
+        : moment(new Date(moment().subtract(2, 'day').toDate()));
+
+      const dateDiff = lastDate.diff(today, 'day') || 0;
+      if (!dateDiff) {
+        setDateHabits(initialFetchResponse);
+      } else {
+        let newDateHabits = [];
+        for (let i = dateDiff + 1; i < 1; i++) {
+          newDateHabits.push({
+            dateId: toDateId(new Date(moment().add(i, 'day').toDate())),
+          });
+        }
+
+        let habits: Habit[];
+        let secondaryFetchResponse: DateHabit[] = [];
+        if (userId) {
+          habits = await habitsApi.fetchHabits(userId);
+
+          secondaryFetchResponse = await dateHabitsApi.createDateHabits(
             userId,
             newDateHabits,
             habits,
           );
-          setDateHabits(initialFetchResponse.concat(secondaryFetchResponse));
+        } else {
+          habits = await habitsAsyncStorage.fetchHabits();
+
+          secondaryFetchResponse =
+            await dateHabitsAsyncStorage.createDateHabits(
+              newDateHabits,
+              habits,
+            );
         }
+
+        setDateHabits(initialFetchResponse.concat(secondaryFetchResponse));
       }
     } catch (err) {
       console.log(err);
     }
+    // } else {
+    // try {
+    //   const initialFetchResponse: DateHabit[] =
+    //     await dateHabitsAsyncStorage.fetchDateHabits();
+
+    //   const lastDate = initialFetchResponse.length
+    //     ? moment(
+    //         fromDateId(
+    //           initialFetchResponse[initialFetchResponse.length - 1].dateId,
+    //         ),
+    //       ).startOf('day')
+    //     : moment(new Date(moment().subtract(2, 'day').toDate()));
+
+    //   const dateDiff = lastDate.diff(today, 'day') || 0;
+    //   if (!dateDiff) {
+    //     setDateHabits(initialFetchResponse);
+    //   } else {
+    //     let newDateHabits = [];
+    //     for (let i = dateDiff + 1; i < 1; i++) {
+    //       newDateHabits.push({
+    //         dateId: toDateId(new Date(moment().add(i, 'day').toDate())),
+    //       });
+    //     }
+    //     const habits = await fetchHabits(userId);
+    //     const secondaryFetchResponse =
+    //       await dateHabitsAsyncStorage.createDateHabits(
+    //         newDateHabits,
+    //         habits,
+    //       );
+    //     setDateHabits(initialFetchResponse.concat(secondaryFetchResponse));
+    //   }
+    // } catch (err) {
+    //   console.log(err);
+    // }
+    // }
   };
 
   useFocusEffect(
@@ -106,7 +168,7 @@ function HomeScreen(): JSX.Element {
     );
 
     const userId = await getUserId();
-    await api.updateDateHabitCompleteState(
+    await dateHabitsApi.updateDateHabitCompleteState(
       userId!,
       selectedDateHabit.dateId,
       !!allTasksCompleted,

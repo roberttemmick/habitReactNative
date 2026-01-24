@@ -144,7 +144,7 @@ function RootTabs() {
           options={{
             title: '',
             tabBarIcon: () => {
-              return <IconButton icon="user" size={28} />;
+              return <IconButton icon="account-outline" size={28} />;
             },
           }}
         />

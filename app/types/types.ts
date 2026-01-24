@@ -6,7 +6,7 @@ export interface Habit {
 }
 
 export interface HabitEntry extends Habit {
-  habitEntryId: number;
+  habitEntryId: number | string;
   completed?: boolean | null;
 }
 
