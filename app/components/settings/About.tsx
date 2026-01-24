@@ -4,7 +4,7 @@ function AboutComponent() {
   return (
     <View>
       <Text style={styles.textFont}>Version: 0.0.0</Text>
-      <Text style={styles.textFont}>Designed and made by Robert Temmick</Text>
+      <Text style={styles.textFont}>Created and designed by Robert Temmick</Text>
       <Text style={styles.textFont}>
         Follow me on{' '}
         <Text

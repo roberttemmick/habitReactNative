@@ -4,11 +4,8 @@ import CalendarWrapper from '../components/calendar/CalendarWrapper';
 import moment from 'moment';
 import {fromDateId, toDateId} from '@marceloterreiro/flash-calendar';
 import {DateHabit, HabitEntry} from '../types/types';
-import {
-  createDateHabits,
-  fetchDateHabits,
-  updateDateHabitCompleteState,
-} from '../api/dateHabits';
+import * as api from '../api/dateHabits';
+// import * as asyncStorage from '../asyncStorage/dateHabits';
 import {useFocusEffect} from '@react-navigation/native';
 import {fetchHabits} from '../api/habits';
 import HabitEntriesList from '../components/HabitEntriesList';
@@ -27,7 +24,7 @@ function HomeScreen(): JSX.Element {
       const userId = await getUserId();
 
       if (userId) {
-        const initialFetchResponse: DateHabit[] = await fetchDateHabits(userId);
+        const initialFetchResponse: DateHabit[] = await api.fetchDateHabits(userId);
         const lastDate = initialFetchResponse.length
           ? moment(
               fromDateId(
@@ -47,7 +44,7 @@ function HomeScreen(): JSX.Element {
             });
           }
           const habits = await fetchHabits(userId);
-          const secondaryFetchResponse = await createDateHabits(
+          const secondaryFetchResponse = await api.createDateHabits(
             userId,
             newDateHabits,
             habits,
@@ -109,7 +106,7 @@ function HomeScreen(): JSX.Element {
     );
 
     const userId = await getUserId();
-    await updateDateHabitCompleteState(
+    await api.updateDateHabitCompleteState(
       userId!,
       selectedDateHabit.dateId,
       !!allTasksCompleted,

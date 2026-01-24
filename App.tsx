@@ -22,6 +22,7 @@ import {
   useState,
 } from 'react';
 import {fetchSettings} from './app/api/settings';
+import {useFeatureFlag} from './app/services/featureFlagService';
 
 export const AuthContext = createContext({
   signOut: () => {},
@@ -36,8 +37,7 @@ const SignInContext = createContext(false);
 export const SettingsContext = createContext({
   settings: {backgroundColor: '#F8F9F7'},
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  refreshSettings: async (newSettings: any) => {
-  },
+  refreshSettings: async (newSettings: any) => {},
 });
 
 function useIsSignedIn(): boolean {
@@ -96,6 +96,7 @@ const RootStack = createBottomTabNavigator({
 
 function RootTabs() {
   const isSignedIn = useIsSignedIn();
+  const isFfEnabled = useFeatureFlag('ffloggedin');
 
   return (
     <RootStack.Navigator
@@ -104,7 +105,7 @@ function RootTabs() {
         tabBarInactiveTintColor: 'gray',
         headerShown: false,
       }}>
-      {isSignedIn && (
+      {(!isFfEnabled || isSignedIn) && (
         <>
           <RootStack.Screen
             name="Home"
@@ -136,11 +137,16 @@ function RootTabs() {
           />
         </>
       )}
-      {!isSignedIn && (
+      {isFfEnabled && !isSignedIn && (
         <RootStack.Screen
           name="Login"
           component={LoginScreen}
-          options={{title: ''}}
+          options={{
+            title: '',
+            tabBarIcon: () => {
+              return <IconButton icon="user" size={28} />;
+            },
+          }}
         />
       )}
     </RootStack.Navigator>
