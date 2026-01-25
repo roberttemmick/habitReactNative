@@ -7,9 +7,11 @@ import DraggableFlatList, {
 } from 'react-native-draggable-flatlist';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import SwipeableItem from 'react-native-swipeable-item';
-import {deleteHabit, updateHabit, updateHabitsBatch} from '../api/habits';
 import {toDateId} from '@marceloterreiro/flash-calendar';
 import {getUserId} from '../api/auth';
+import * as habitsApi from '../api/habits';
+import * as habitsAsyncStorage from '../asyncStorage/habits';
+import {useFeatureFlag} from '../services/featureFlagService';
 
 function ChangeHabitsList(props: {
   habits: Habit[];
@@ -18,16 +20,19 @@ function ChangeHabitsList(props: {
   const [habits, setHabits] = useState<Habit[]>(props.habits);
   const previousHabitNames = useRef<{[id: number]: string}>({});
   const [userId, setUserId] = useState(0);
+  const isFfLoggedInEnabled = useFeatureFlag('ffloggedin');
 
   useEffect(() => {
     setHabits(props.habits);
     const nameMap: {[id: number]: string} = {};
-    props.habits.forEach(h => {
-      nameMap[h.id] = h.name;
+    props.habits.forEach((h: Habit) => {
+      nameMap[h.id as number] = h.name;
     });
     previousHabitNames.current = nameMap;
-    populateUserId();
-  }, [props.habits]);
+    if (isFfLoggedInEnabled) {
+      populateUserId();
+    }
+  }, [isFfLoggedInEnabled, props.habits]);
 
   const populateUserId = async () => {
     const id = await getUserId();
@@ -47,7 +52,9 @@ function ChangeHabitsList(props: {
 
       try {
         if (userId) {
-          await updateHabitsBatch(userId, updatedHabits);
+          await habitsApi.updateHabitsBatch(userId, updatedHabits);
+        } else {
+          await habitsAsyncStorage.updateHabitsBatch(updatedHabits);
         }
       } catch (error) {
         console.error('Failed to update sort order', error);
@@ -59,7 +66,7 @@ function ChangeHabitsList(props: {
   const handleDelete = useCallback(
     async (id: number) => {
       if (userId) {
-        await deleteHabit(userId, id, toDateId(new Date()));
+        await habitsApi.deleteHabit(userId, id, toDateId(new Date()));
       }
       const prevHabits = habits.filter(habit => habit.id !== id);
       updateHabitsSortOrder(prevHabits);
@@ -83,7 +90,7 @@ function ChangeHabitsList(props: {
       if (updatedName.length === 0) {
         handleDelete(id);
       } else if (updatedName !== prevName && userId) {
-        await updateHabit(userId, id, updatedName, sortOrder);
+        await habitsApi.updateHabit(userId, id, updatedName, sortOrder);
         previousHabitNames.current[id] = updatedName;
       }
     },
@@ -105,7 +112,7 @@ function ChangeHabitsList(props: {
                 icon="delete-outline"
                 iconColor={'darkred'}
                 size={48}
-                onPress={() => handleDelete(item.id)}
+                onPress={() => handleDelete(item.id as number)}
               />
             </View>
           )}>
@@ -113,12 +120,14 @@ function ChangeHabitsList(props: {
             <TextInput
               style={styles.habitName}
               value={item.name}
-              onChangeText={text => handleLocalHabitNameChange(item.id, text)}
+              onChangeText={text =>
+                handleLocalHabitNameChange(item.id as number, text)
+              }
               onBlur={() =>
-                onUpdateHabitName(item.id, item.name, item.sortOrder)
+                onUpdateHabitName(item.id as number, item.name, item.sortOrder)
               }
               onSubmitEditing={() =>
-                onUpdateHabitName(item.id, item.name, item.sortOrder)
+                onUpdateHabitName(item.id as number, item.name, item.sortOrder)
               }
             />
 

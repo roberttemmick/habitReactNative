@@ -16,6 +16,13 @@ export interface DateHabit {
   habitEntries: HabitEntry[];
 }
 
+export interface Settings {
+  backgroundColor: string;
+  enableNotifications: boolean,
+  reminderTime: string;
+  weekStartsOn: string;
+}
+
 export interface User {
   id: number;
   email: string;

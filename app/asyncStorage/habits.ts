@@ -16,7 +16,6 @@ export const createHabit = async (
     };
 
     try {
-      console.log(  'habit to be saved:', habit);
       await AsyncStorage.setItem(`habits:${habit.id}`, JSON.stringify(habit));
 
       return fetchHabits();
@@ -37,21 +36,21 @@ export const createHabit = async (
   }
 };
 
-// export const deleteHabit = async (
-//   userId: number,
-//   habitId: number,
-//   dateId: string,
-// ) => {
-//   try {
-//     const response = await api.put(`${route}/${userId}/${habitId}/${dateId}`);
-//     return response.data;
-//   } catch (error: unknown) {
-//     if (error instanceof Error) {
-//       Alert.alert('Something went wrong, please try again');
-//       throw new Error(`Failed to delete habit: ${error.message}`);
-//     }
-//   }
-// };
+export const deleteHabit = async (
+  userId: number,
+  habitId: number,
+  dateId: string,
+) => {
+  try {
+    const response = await api.put(`${route}/${userId}/${habitId}/${dateId}`);
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      Alert.alert('Something went wrong, please try again');
+      throw new Error(`Failed to delete habit: ${error.message}`);
+    }
+  }
+};
 
 export const fetchHabits = async () => {
   try {
@@ -75,40 +74,40 @@ export const fetchHabits = async () => {
   }
 };
 
-// export const updateHabit = async (
-//   userId: number,
-//   habitId: number,
-//   name: string,
-//   sortOrder: number,
-// ) => {
-//   try {
-//     const response = await api.put(`${route}`, {
-//       userId,
-//       habitId,
-//       name,
-//       sortOrder,
-//     });
-//     return response.data;
-//   } catch (error: unknown) {
-//     if (error instanceof Error) {
-//       Alert.alert('Something went wrong, please try again');
-//       throw new Error(`Failed to update habit: ${error.message}`);
-//     }
-//   }
-// };
+export const updateHabit = async (
+  userId: number,
+  habitId: number,
+  name: string,
+  sortOrder: number,
+) => {
+  try {
+    const response = await api.put(`${route}`, {
+      userId,
+      habitId,
+      name,
+      sortOrder,
+    });
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      Alert.alert('Something went wrong, please try again');
+      throw new Error(`Failed to update habit: ${error.message}`);
+    }
+  }
+};
 
-// export const updateHabitsBatch = async (userId: number, habits: Habit[]) => {
-//   try {
-//     const response = await api.put(`${route}/batch-update`, {
-//       userId,
-//       habits,
-//     });
+export const updateHabitsBatch = async (habits: Habit[]) => {
+  try {
+    const response = await api.put(`${route}/batch-update`, {
+      userId,
+      habits,
+    });
 
-//     return response.data;
-//   } catch (error: unknown) {
-//     if (error instanceof Error) {
-//       Alert.alert('Something went wrong, please try again');
-//       throw new Error(`Failed to update habits: ${error.message}`);
-//     }
-//   }
-// };
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      Alert.alert('Something went wrong, please try again');
+      throw new Error(`Failed to update habits: ${error.message}`);
+    }
+  }
+};
