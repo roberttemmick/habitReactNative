@@ -21,13 +21,13 @@ function HomeScreen(): JSX.Element {
   const [dateHabits, setDateHabits] = useState<DateHabit[]>([]);
   const [streakCount, setStreakCount] = useState(0);
 
-  const isFfEnabled = useFeatureFlag('ffloggedin');
+  const isFfLoggedInEnabled = useFeatureFlag('ffloggedin');
 
   const fetchData = async () => {
     try {
       let userId: number | null = null;
 
-      if (isFfEnabled) {
+      if (isFfLoggedInEnabled) {
         userId = await getUserId();
       }
 

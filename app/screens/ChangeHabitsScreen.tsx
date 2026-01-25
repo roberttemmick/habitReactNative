@@ -3,42 +3,66 @@ import AddHabitComponent from '../components/AddHabitComponent';
 import {Alert, StyleSheet, View} from 'react-native';
 import ChangeHabitsList from '../components/ChangeHabitsList';
 import {Habit} from '../types/types';
-import {createHabit, fetchHabits} from '../api/habits';
 import {toDateId} from '@marceloterreiro/flash-calendar';
 import {getUserId} from '../api/auth';
+import {useFeatureFlag} from '../services/featureFlagService';
+import * as habitsApi from '../api/habits';
+import * as habitsAsyncStorage from '../asyncStorage/habits';
 
 function ChangeHabitsScreen() {
   const [habits, setHabits] = useState<Habit[]>([]);
+  const isFfLoggedInEnabled = useFeatureFlag('ffloggedin');
 
   useEffect(() => {
     const fetchData = async () => {
+      let userId: number | null = null;
+
       try {
-        const userId = await getUserId();
+        if (isFfLoggedInEnabled) {
+          userId = await getUserId();
+        }
+
+        let response: Habit[] = [];
 
         if (userId) {
-          const response = await fetchHabits(userId);
-          setHabits(response);
+          response = await habitsApi.fetchHabits(userId);
+        } else {
+          response = await habitsAsyncStorage.fetchHabits();
         }
+
+        setHabits(response);
       } catch (err) {
         console.log(err);
         Alert.alert('Unable to retrieve habits', 'Please try again later');
       }
     };
     fetchData();
-  }, []);
+  }, [isFfLoggedInEnabled]);
 
   const handleAddHabit = async (newHabitName: string) => {
-    const userId = await getUserId();
+    let userId: number | null = null;
+
+    if (isFfLoggedInEnabled) {
+      userId = await getUserId();
+    }
 
     if (userId) {
-      const response = await createHabit(
+      const response: Habit = await habitsApi.createHabit(
         userId,
         newHabitName,
         toDateId(new Date()),
         habits.length,
       );
       const updatedHabitsList = habits.concat([response]);
+
       setHabits(updatedHabitsList);
+    } else {
+      const response: Habit[] = await habitsAsyncStorage.createHabit(
+        newHabitName,
+        habits.length,
+      );
+
+      setHabits(response);
     }
   };
 

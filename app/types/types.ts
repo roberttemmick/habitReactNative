@@ -1,5 +1,5 @@
 export interface Habit {
-  id: number;
+  id: number | string;
   name: string;
   sortOrder: number;
   archived: boolean;

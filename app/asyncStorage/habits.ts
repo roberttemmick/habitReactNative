@@ -1,28 +1,41 @@
-import {Alert} from 'react-native';
-import {Habit} from '../types/types';
+import { Alert } from 'react-native';
+import { Habit } from '../types/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid';
 
-// export const createHabit = async (
-//   userId: number,
-//   name: string,
-//   dateId: string,
-//   sortOrder: number,
-// ) => {
-//   try {
-//     const response = await api.post(`${route}`, {
-//       userId,
-//       name,
-//       dateId,
-//       sortOrder,
-//     });
-//     return response.data;
-//   } catch (error: unknown) {
-//     if (error instanceof Error) {
-//       Alert.alert('Something went wrong, please try again');
-//       throw new Error(`Failed to create habit: ${error.message}`);
-//     }
-//   }
-// };
+export const createHabit = async (
+  name: string,
+  sortOrder: number,
+) => {
+  try {
+    const habit: Habit = {
+      id: uuid.v4(),
+      name,
+      sortOrder,
+      archived: false,
+    };
+
+    try {
+      console.log(  'habit to be saved:', habit);
+      await AsyncStorage.setItem(`habits:${habit.id}`, JSON.stringify(habit));
+
+      return fetchHabits();
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        Alert.alert('Something went wrong, please try again');
+        throw new Error(`Failed to create habits: ${error.message}`);
+      }
+
+      return [];
+    }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      Alert.alert('Something went wrong, please try again');
+      throw new Error(`Failed to create habit: ${error.message}`);
+    }
+    return [];
+  }
+};
 
 // export const deleteHabit = async (
 //   userId: number,
