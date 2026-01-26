@@ -18,6 +18,7 @@ export const createHabit = async (
 
     try {
       await AsyncStorage.setItem(`habits:${habit.id}`, JSON.stringify(habit));
+      // TODO: Add to habitEntries
 
       return fetchHabits();
     } catch (error: unknown) {
@@ -41,14 +42,15 @@ export const deleteHabit = async (
   habitId: number,
 ) => {
   try {
-    return await AsyncStorage.removeItem(`habits:${habitId}`);
+    const response = await AsyncStorage.getItem(`habits:${habitId}`);
+    // TODO: Remove from habitEntries
+    console.log(response);
+    return JSON.parse(response || '{}');
   } catch (error: unknown) {
     if (error instanceof Error) {
       Alert.alert('Something went wrong, please try again');
       throw new Error(`Failed to delete habit: ${error.message}`);
     }
-
-    return {};
   }
 };
 
@@ -85,7 +87,7 @@ export const updateHabit = async (
 export const updateHabitsBatch = async (habits: Habit[]) => {
   const keyValuePairs: Array<[string, string]> = [];
 
-  for(let habit of habits){
+  for (let habit of habits) {
     keyValuePairs.push([`habits:${habit.id}`, JSON.stringify(habit)]);
   }
 
@@ -98,7 +100,5 @@ export const updateHabitsBatch = async (habits: Habit[]) => {
       Alert.alert('Something went wrong, please try again');
       throw new Error(`Failed to update habits: ${error.message}`);
     }
-
-    return [];
   }
 };

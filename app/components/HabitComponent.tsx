@@ -1,7 +1,9 @@
 import {JSX, useEffect, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {IconButton} from 'react-native-paper';
-import {updateHabitEntry} from '../api/habitEntries';
+import * as habitEntriesApi from '../api/habitEntries';
+import * as habitEntriesAsyncStorage from '../asyncStorage/habitEntries';
+import {useFeatureFlag} from '../services/featureFlagService';
 
 function HabitComponent({
   id,
@@ -15,21 +17,24 @@ function HabitComponent({
   emitCompletedStateChangeEvent: Function;
 }): JSX.Element {
   const [isComplete, setIsComplete] = useState<boolean | null>(completed);
-
+  const isFfLoggedInEnabled = useFeatureFlag('ffloggedin');
   useEffect(() => {
     setIsComplete(completed);
   }, [completed]);
 
   const handleCompleteStateChange = async (completeState: boolean) => {
-    setIsComplete(completeState);
-
     try {
-      await updateHabitEntry(id, completeState);
+      if (isFfLoggedInEnabled) {
+        await habitEntriesApi.updateHabitEntry(id, completeState);
+      } else {
+        await habitEntriesAsyncStorage.updateHabitEntry(id, completeState);
+      }
+  
+      setIsComplete(completeState);
+      emitCompletedStateChangeEvent(id, completeState);
     } catch (err) {
       console.log(err);
     }
-
-    emitCompletedStateChangeEvent(id, completeState);
   };
 
   return (

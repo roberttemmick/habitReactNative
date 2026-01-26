@@ -67,7 +67,10 @@ function ChangeHabitsList(props: {
     async (id: number) => {
       if (userId) {
         await habitsApi.deleteHabit(userId, id, toDateId(new Date()));
+      } else {
+        await habitsAsyncStorage.deleteHabit(id);
       }
+      
       const prevHabits = habits.filter(habit => habit.id !== id);
       updateHabitsSortOrder(prevHabits);
       props.deleteHabitEventEmitter(id);

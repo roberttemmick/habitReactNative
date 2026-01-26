@@ -1,5 +1,5 @@
 import {JSX, useCallback, useEffect, useMemo, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Button, ScrollView, StyleSheet, Text, View} from 'react-native';
 import CalendarWrapper from '../components/calendar/CalendarWrapper';
 import moment from 'moment';
 import {fromDateId, toDateId} from '@marceloterreiro/flash-calendar';
@@ -12,6 +12,7 @@ import * as dateHabitsAsyncStorage from '../asyncStorage/dateHabits';
 import {useFocusEffect} from '@react-navigation/native';
 import HabitEntriesList from '../components/HabitEntriesList';
 import {useFeatureFlag} from '../services/featureFlagService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function HomeScreen(): JSX.Element {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -82,41 +83,6 @@ function HomeScreen(): JSX.Element {
     } catch (err) {
       console.log(err);
     }
-    // } else {
-    // try {
-    //   const initialFetchResponse: DateHabit[] =
-    //     await dateHabitsAsyncStorage.fetchDateHabits();
-
-    //   const lastDate = initialFetchResponse.length
-    //     ? moment(
-    //         fromDateId(
-    //           initialFetchResponse[initialFetchResponse.length - 1].dateId,
-    //         ),
-    //       ).startOf('day')
-    //     : moment(new Date(moment().subtract(2, 'day').toDate()));
-
-    //   const dateDiff = lastDate.diff(today, 'day') || 0;
-    //   if (!dateDiff) {
-    //     setDateHabits(initialFetchResponse);
-    //   } else {
-    //     let newDateHabits = [];
-    //     for (let i = dateDiff + 1; i < 1; i++) {
-    //       newDateHabits.push({
-    //         dateId: toDateId(new Date(moment().add(i, 'day').toDate())),
-    //       });
-    //     }
-    //     const habits = await fetchHabits(userId);
-    //     const secondaryFetchResponse =
-    //       await dateHabitsAsyncStorage.createDateHabits(
-    //         newDateHabits,
-    //         habits,
-    //       );
-    //     setDateHabits(initialFetchResponse.concat(secondaryFetchResponse));
-    //   }
-    // } catch (err) {
-    //   console.log(err);
-    // }
-    // }
   };
 
   useFocusEffect(
@@ -167,12 +133,19 @@ function HomeScreen(): JSX.Element {
       ),
     );
 
-    const userId = await getUserId();
-    await dateHabitsApi.updateDateHabitCompleteState(
-      userId!,
-      selectedDateHabit.dateId,
-      !!allTasksCompleted,
-    );
+    if (isFfLoggedInEnabled) {
+      const userId = await getUserId();
+      await dateHabitsApi.updateDateHabitCompleteState(
+        userId!,
+        selectedDateHabit.dateId,
+        !!allTasksCompleted,
+      );
+    } else {
+      await dateHabitsAsyncStorage.updateDateHabitCompleteState(
+        `dateHabits:${selectedDateHabit.dateId}`,
+        updatedDateHabit,
+      );
+    }
   };
 
   useEffect(() => {
@@ -213,6 +186,7 @@ function HomeScreen(): JSX.Element {
   return (
     <ScrollView style={styles.contentWrapper}>
       <View>
+        <Button title={'Clear'} onPress={() => AsyncStorage.clear()} />
         <CalendarWrapper
           calendarMinDateId={calendarMinDateId}
           dateHabits={dateHabits}
