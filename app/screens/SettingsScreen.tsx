@@ -5,9 +5,12 @@ import AccountSettingsComponent from '../components/settings/AccountSettingsComp
 import AppSettingsComponent from '../components/settings/AppSettingsComponent';
 import NotificationSettingsComponent from '../components/settings/NotificationSettingsComponent';
 import {getUserId} from '../api/auth';
-import {fetchSettings} from '../api/settings';
 import {getUser} from '../api/user';
 import AboutComponent from '../components/settings/About';
+import {useFeatureFlag} from '../services/featureFlagService';
+import {Settings} from '../types/types';
+import * as settingsApi from '../api/settings';
+import * as settingsAsyncStorage from '../asyncStorage/settings';
 
 function SettingsScreen() {
   const [userId, setUserId] = useState(0);
@@ -18,36 +21,36 @@ function SettingsScreen() {
   );
   const [newEnableNotifications, setNewEnableNotifications] = useState(false);
   const [newReminderTime, setNewReminderTime] = useState('21:00');
+  const isFfLoggedInEnabled = useFeatureFlag('ffloggedin');
 
   useEffect(() => {
     const fetchData = async () => {
+      let settings: Settings;
+
       try {
-        const id = await getUserId();
-        if (id) {
-          setUserId(id);
+        if (isFfLoggedInEnabled) {
+          const id = await getUserId();
+          if (id) {
+            setUserId(id);
+            const {email} = await getUser(userId);
+            setNewEmail(email);
+          }
+
+          settings = await settingsApi.fetchSettings(userId);
+        } else {
+          settings = await settingsAsyncStorage.fetchSettings();
         }
 
-        if (userId) {
-          const {
-            weekStartsOn,
-            enableNotifications,
-            reminderTime,
-            backgroundColor,
-          } = await fetchSettings(userId);
-          const {email} = await getUser(userId);
-
-          setNewEmail(email);
-          setNewWeekStartsOn(weekStartsOn);
-          setNewBackgroundColor(backgroundColor);
-          setNewEnableNotifications(enableNotifications);
-          setNewReminderTime(reminderTime);
-        }
+        setNewWeekStartsOn(settings.weekStartsOn);
+        setNewBackgroundColor(settings.backgroundColor);
+        setNewEnableNotifications(settings.enableNotifications);
+        setNewReminderTime(settings.reminderTime);
       } catch (err) {
         console.log(err);
       }
     };
     fetchData();
-  }, [userId]);
+  }, [isFfLoggedInEnabled, userId]);
 
   return (
     <SafeAreaProvider>

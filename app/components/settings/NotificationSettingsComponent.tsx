@@ -2,6 +2,9 @@ import {useEffect, useState} from 'react';
 import {StyleSheet, Switch, Text, TouchableOpacity, View} from 'react-native';
 import {DefaultTheme, Provider} from 'react-native-paper';
 import {TimePickerModal} from 'react-native-paper-dates';
+import * as settingsApi from '../../api/settings';
+import * as settingsAsyncStorage from '../../asyncStorage/settings';
+import {useFeatureFlag} from '../../services/featureFlagService';
 import {updateNotificationSettings} from '../../api/settings';
 
 interface NotificationSettings {
@@ -20,6 +23,7 @@ function NotificationSettingsComponent({
   const [isChangeTimeButtonVisible, setIsChangeTimeButtonVisible] =
     useState(false);
   const [newReminderTime, setNewReminderTime] = useState(reminderTime);
+  const isFfLoggedInEnabled = useFeatureFlag('ffloggedin');
 
   useEffect(() => {
     setNewEnableNotifications(enableNotifications);
@@ -30,11 +34,18 @@ function NotificationSettingsComponent({
     updatedEnabledState: boolean,
   ) => {
     setNewEnableNotifications(updatedEnabledState);
-    await updateNotificationSettings(
-      userId,
-      updatedEnabledState,
-      newReminderTime,
-    );
+    if (isFfLoggedInEnabled) {
+      await settingsApi.updateNotificationSettings(
+        userId,
+        updatedEnabledState,
+        newReminderTime,
+      );
+    } else {
+      await settingsAsyncStorage.updateSettings({
+        enableNotifications: updatedEnabledState,
+        reminderTime: newReminderTime,
+      });
+    }
   };
 
   const onReminderTimeChange = async (hour: number, minutes: number) => {
@@ -43,11 +54,18 @@ function NotificationSettingsComponent({
     const formattedTime = `${hourString}:${minuteString}`;
     setNewReminderTime(formattedTime);
     setIsChangeTimeButtonVisible(false);
-    await updateNotificationSettings(
-      userId,
-      newEnableNotifications,
-      formattedTime,
-    );
+    if (isFfLoggedInEnabled) {
+      await updateNotificationSettings(
+        userId,
+        newEnableNotifications,
+        formattedTime,
+      );
+    } else {
+      await settingsAsyncStorage.updateSettings({
+        enableNotifications: newEnableNotifications,
+        reminderTime: formattedTime,
+      });
+    }
   };
 
   const onModalDismiss = () => {

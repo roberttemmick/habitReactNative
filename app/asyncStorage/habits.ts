@@ -6,10 +6,11 @@ import uuid from 'react-native-uuid';
 export const createHabit = async (
   name: string,
   sortOrder: number,
+  habitId?: number,
 ) => {
   try {
     const habit: Habit = {
-      id: uuid.v4(),
+      id: habitId || uuid.v4(),
       name,
       sortOrder,
       archived: false,
@@ -37,18 +38,17 @@ export const createHabit = async (
 };
 
 export const deleteHabit = async (
-  userId: number,
   habitId: number,
-  dateId: string,
 ) => {
   try {
-    const response = await api.put(`${route}/${userId}/${habitId}/${dateId}`);
-    return response.data;
+    return await AsyncStorage.removeItem(`habits:${habitId}`);
   } catch (error: unknown) {
     if (error instanceof Error) {
       Alert.alert('Something went wrong, please try again');
       throw new Error(`Failed to delete habit: ${error.message}`);
     }
+
+    return {};
   }
 };
 
@@ -75,39 +75,30 @@ export const fetchHabits = async () => {
 };
 
 export const updateHabit = async (
-  userId: number,
   habitId: number,
   name: string,
   sortOrder: number,
 ) => {
-  try {
-    const response = await api.put(`${route}`, {
-      userId,
-      habitId,
-      name,
-      sortOrder,
-    });
-    return response.data;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      Alert.alert('Something went wrong, please try again');
-      throw new Error(`Failed to update habit: ${error.message}`);
-    }
-  }
+  return createHabit(name, sortOrder, habitId);
 };
 
 export const updateHabitsBatch = async (habits: Habit[]) => {
-  try {
-    const response = await api.put(`${route}/batch-update`, {
-      userId,
-      habits,
-    });
+  const keyValuePairs: Array<[string, string]> = [];
 
-    return response.data;
+  for(let habit of habits){
+    keyValuePairs.push([`habits:${habit.id}`, JSON.stringify(habit)]);
+  }
+
+  try {
+    await AsyncStorage.multiSet(keyValuePairs);
+
+    return fetchHabits();
   } catch (error: unknown) {
     if (error instanceof Error) {
       Alert.alert('Something went wrong, please try again');
       throw new Error(`Failed to update habits: ${error.message}`);
     }
+
+    return [];
   }
 };

@@ -1,8 +1,11 @@
 import {Picker} from '@react-native-picker/picker';
 import {useContext, useEffect, useState} from 'react';
 import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {updateAppSettings} from '../../api/settings';
 import {SettingsContext} from '../../../App';
+import {AppSettings} from '../../types/types';
+import {useFeatureFlag} from '../../services/featureFlagService';
+import * as settingsApi from '../../api/settings';
+import * as settingsAsyncStorage from '../../asyncStorage/settings';
 
 const days = [
   {
@@ -82,23 +85,18 @@ const colors = [
   },
 ];
 
-interface AppSettings {
-  weekStartsOn: 'sunday' | 'monday';
-  backgroundColor: string;
-  userId: number;
-}
-
 function AppSettingsComponent({
   weekStartsOn,
   backgroundColor,
   userId,
-}: AppSettings) {
+}: AppSettings & {userId: number}) {
   const [newWeekStarts, setNewWeekStarts] = useState(weekStartsOn);
   const [isWeekStartsOnPickerVisible, setIsWeekStartsOnPickerVisible] =
     useState(false);
   const [selectedBackground, setSelectedBackground] = useState(backgroundColor);
   const [isBackgroundPickerVisible, setIsBackgroundPickerVisible] =
     useState(false);
+  const isFfLoggedInEnabled = useFeatureFlag('ffloggedin');
 
   const {refreshSettings} = useContext(SettingsContext);
 
@@ -107,7 +105,18 @@ function AppSettingsComponent({
   }, [weekStartsOn]);
 
   const onWeekStartsSave = async () => {
-    await updateAppSettings(userId, newWeekStarts, selectedBackground);
+    if (isFfLoggedInEnabled) {
+      await settingsApi.updateAppSettings(
+        userId,
+        newWeekStarts,
+        selectedBackground,
+      );
+    } else {
+      await settingsAsyncStorage.updateSettings({
+        weekStartsOn: newWeekStarts,
+        backgroundColor: selectedBackground,
+      });
+    }
     setIsWeekStartsOnPickerVisible(false);
   };
 
@@ -122,7 +131,18 @@ function AppSettingsComponent({
   };
 
   const onBackgroundSave = async () => {
-    await updateAppSettings(userId, newWeekStarts, selectedBackground);
+    if (isFfLoggedInEnabled) {
+      await settingsApi.updateAppSettings(
+        userId,
+        newWeekStarts,
+        selectedBackground,
+      );
+    } else {
+      await settingsAsyncStorage.updateSettings({
+        weekStartsOn: newWeekStarts,
+        backgroundColor: selectedBackground,
+      });
+    }
     setIsBackgroundPickerVisible(false);
   };
 
